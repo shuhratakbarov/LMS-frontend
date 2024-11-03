@@ -1,4 +1,4 @@
-import {token_expired, token_name} from "../const";
+import {token_expired, token_name} from "./const";
 
 export const getToken=()=>{
    let str= localStorage.getItem(token_name);
@@ -16,7 +16,7 @@ export const getToken=()=>{
 
 export function setToken(token){
     if (getToken()){
-        localStorage.removeItem(token_name);
+        deleteToken();
     }
 
     const now = new Date();

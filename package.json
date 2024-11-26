@@ -1,5 +1,5 @@
 {
-  "name": "lesson_11_client",
+  "name": "lms-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -8,11 +8,14 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.13.3",
     "axios": "^1.6.5",
+    "bootstrap": "^5.3.3",
     "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.3",
     "react-scripts": "5.0.1",
+    "react-tsparticles": "^2.12.2",
+    "tsparticles": "^3.6.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

@@ -10,9 +10,6 @@ import {formItemLayout} from "../../../const/FormItemLayout";
 const CreateStudentModal = ({isAddModalVisible, onClose, onSuccess}) => {
 
     const [form] = Form.useForm();
-
-
-
     const [options, setOptions] = useState([]);
     const [loadingOptions, setLoadingOptions] = useState(false);
     const fetchGroups = async () => {
@@ -95,7 +92,7 @@ const CreateStudentModal = ({isAddModalVisible, onClose, onSuccess}) => {
                            rules={[{required: true, message: 'Please enter last name!'}]} {...formItemLayout}  >
                     <Input placeholder='Enter name' maxLength={30} allowClear/>
                 </Form.Item>
-                <Form.Item label="Phone number" name="phone"
+                <Form.Item label="Phone" name="phone"
                            rules={[{required: true, message: 'Please enter phone number!'}]} {...formItemLayout}  >
                     <Input placeholder='Enter phone number' maxLength={16} allowClear/>
                 </Form.Item>
@@ -113,7 +110,7 @@ const CreateStudentModal = ({isAddModalVisible, onClose, onSuccess}) => {
                 </Form.Item>
                 <Form.Item label="Username" name="username"
                            rules={[{required: true, message: 'Please enter username!'}]} {...formItemLayout}  >
-                    <Input placeholder='Enter username' maxLength={8} allowClear/>
+                    <Input placeholder='Enter username' maxLength={10} allowClear/>
                 </Form.Item>
                 <Form.Item label="Password" name="password"
                            rules={[{required: true, message: 'Please enter a password!'}]} {...formItemLayout}  >

@@ -2,7 +2,8 @@ import React, {Fragment} from "react";
 import {Component} from "react";
 import {Button, Space, Table} from "antd";
 import axios from "axios";
-import {DeleteOutlined, FormOutlined, ArrowLeftOutlined, EditOutlined} from "@ant-design/icons";
+import {DeleteOutlined, FormOutlined, ArrowLeftOutlined, EditOutlined,
+    UserDeleteOutlined} from "@ant-design/icons";
 import UpdateGroupModal from "./updateGroup";
 import DeleteGroupModal from "./deleteGroup";
 import {serverURL} from "../../../server/serverConsts";
@@ -138,7 +139,7 @@ class ActionsInGroup extends Component {
                 key: 'action',
                 render: (record) => (
                     <Space size="middle">
-                        <a onClick={() => this.handleRemove(record.id,record.firstName)}><DeleteOutlined/></a>
+                        <a onClick={() => this.handleRemove(record.id,record.firstName)}><UserDeleteOutlined/></a>
                     </Space>
                 ),
             },
@@ -167,7 +168,7 @@ class ActionsInGroup extends Component {
                     <Button type="primary" onClick={this.handleAdd} icon={<FormOutlined/>}>
                         Add new student
                     </Button>
-                    <Button type="primary" onClick={this.handleDelete} icon={<DeleteOutlined/>}
+                    <Button type="primary" onClick={this.handleDelete} icon={<DeleteOutlined />}
                             style={{float: "right"}}>
                         Delete group
                     </Button>

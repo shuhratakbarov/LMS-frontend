@@ -3,8 +3,13 @@ import {Button, Form, Input, message} from "antd";
 import {setToken} from "../../util/TokenUtil";
 import {ENDPOINTS} from "../../server/endpoints";
 import {useAxios} from "../../server/AxiosProvider";
+import {
+    LoginOutlined,
+    LoadingOutlined
+} from '@ant-design/icons';
 
 const imageLogin = "././login.png";
+const imageTuit = "./tuit.png";
 
 const Login = () => {
     const {post, loading, error} = useAxios();
@@ -26,10 +31,18 @@ const Login = () => {
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             width: "100%",
-            height: '70vh',
+            height: '80.1vh',
             margin: "0 auto",
-            paddingTop: '15%',
+            paddingTop: '10%',
         }}>
+            <img src={imageTuit} alt="Learning Logo" style={{
+                display: "block",
+                margin: "0 auto",
+                width: "150px",
+                height: "auto",
+                borderRadius: "50%", // Make the image circular
+                objectFit: "cover"   // Ensure the image scales well within the circle
+            }}/>
             <h2 style={{textAlign: "center"}}>Learning Management System</h2>
             <Form
                 name="basic"
@@ -57,8 +70,12 @@ const Login = () => {
                 <Form.Item
                     wrapperCol={{offset: 8, span: 16}}
                 >
-                    <Button type="primary" htmlType="submit" loading={loading}>
-                        {loading ? 'Logging in...' : 'Login'}
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                        style={{ width: "61vh" }}>
+                        {loading ? <div><LoadingOutlined /> 'Logging in...'</div>  : <div><LoginOutlined /> Login</div>}
                     </Button>
                 </Form.Item>
             </Form>

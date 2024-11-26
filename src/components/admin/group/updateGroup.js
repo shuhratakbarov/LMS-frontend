@@ -46,7 +46,7 @@ const UpdateGroupModal = ({isEditModalVisible, onClose, onSuccess, record}) => {
     const fetchTeachers = async () => {
         try {
             setLoadingOptions(true);
-            const response = await axios.get(`${serverURL}admin/user/teacher-id-and-username`,{
+            const response = await axios.get(`${serverURL}admin/teacher-id-and-username`,{
                 headers:{
                     Authorization: `Bearer ${getToken()}`
                 }
@@ -135,7 +135,7 @@ const UpdateGroupModal = ({isEditModalVisible, onClose, onSuccess, record}) => {
                     </Select>
 
                 </Form.Item>
-                <Form.Item label="Teacher username" name="teacherId"
+                <Form.Item label="Teacher" name="teacherId"
                            rules={[{required: true, message: 'Please select a teacher!'}]} {...formItemLayout}  >
                     <Select
                         placeholder='Select course'

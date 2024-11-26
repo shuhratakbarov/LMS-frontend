@@ -19,7 +19,7 @@ class Clock extends Component {
         const dateTime = date;
         const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
         const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
-        const dateFormatter = new Intl.DateTimeFormat('en', dateOptions);
+        const dateFormatter = new Intl.DateTimeFormat('ru', dateOptions);
         const timeFormatter = new Intl.DateTimeFormat('en', timeOptions);
         const formattedDate = dateFormatter.format(dateTime).replace(/\//g, '.');
         const formattedTime = timeFormatter.format(dateTime);

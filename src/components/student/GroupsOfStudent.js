@@ -55,7 +55,6 @@ class GroupsOfStudent extends Component {
                 }
             })
             .catch((err) => {
-                alert(url)
                 message.error(err);
             });
     }

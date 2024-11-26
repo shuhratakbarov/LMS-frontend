@@ -1,5 +1,5 @@
-import React from 'react';
-import {Modal, Form, Input, Button, message, DatePicker} from 'antd';
+import React, {useState} from 'react';
+import {Modal, Form, Input, Button, message, DatePicker, Select} from 'antd';
 import {PlusOutlined} from "@ant-design/icons";
 import axios from "axios";
 import {serverURL} from "../../../server/serverConsts";
@@ -10,8 +10,34 @@ import {formItemLayout} from "../../../const/FormItemLayout";
 const CreateTeacherModal = ({isAddModalVisible, onClose, onSuccess}) => {
 
     const [form] = Form.useForm();
-
-
+    const [options, setOptions] = useState([]);
+    const [loadingOptions, setLoadingOptions] = useState(false);
+    const fetchGroups = async () => {
+        try {
+            setLoadingOptions(true);
+            const response = await axios.get(`${serverURL}admin/group/group-id-and-name`,{
+                headers:{
+                    Authorization: `Bearer ${getToken()}`
+                }
+            });
+            const dto = response.data;
+            if (dto.success) {
+                const jsonData = dto.data;
+                const mappedOptions = jsonData.map(item => (
+                    <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                    </Select.Option>
+                ));
+                setOptions(mappedOptions);
+            } else {
+                message.error(dto.message);
+            }
+        } catch (error) {
+            message.error(error.message);
+        } finally {
+            setLoadingOptions(false);
+        }
+    };
     const onFinish = (values) => {
         values.role_id=2;
         console.log(values);
@@ -47,7 +73,7 @@ const CreateTeacherModal = ({isAddModalVisible, onClose, onSuccess}) => {
 
     return (
         <Modal
-            title="Add New GroupsList"
+            title="Add New Teacher"
             open={isAddModalVisible}
             onCancel={handleCancel}
             footer={null}
@@ -83,16 +109,28 @@ const CreateTeacherModal = ({isAddModalVisible, onClose, onSuccess}) => {
                 </Form.Item>
                 <Form.Item label="Username" name="username"
                            rules={[{required: true, message: 'Please enter username!'}]} {...formItemLayout}  >
-                    <Input placeholder='Enter username' maxLength={8} allowClear/>
+                    <Input placeholder='Enter username' maxLength={10} allowClear/>
                 </Form.Item>
                 <Form.Item label="Password" name="password"
                            rules={[{required: true, message: 'Please enter a password!'}]} {...formItemLayout}  >
                     <Input placeholder='Enter a password' maxLength={8} allowClear/>
                 </Form.Item>
+                <Form.Item label="Groups" name="groups"
+                           rules={[{required: false, message: 'Iltimos guruhlarni tanlang!'}]} {...formItemLayout}>
+                    <Select
+                        placeholder='Guruhlarni tanlang'
+                        allowClear
+                        mode="multiple"
+                        onClick={fetchGroups}
+                        loading={loadingOptions}
+                    >
+                        {options}
+                    </Select>
+                </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit"
                             icon={<PlusOutlined/>}>
-                        Add New GroupsList
+                        Add New Teacher
                     </Button>
                 </Form.Item>
             </Form>

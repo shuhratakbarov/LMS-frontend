@@ -102,7 +102,7 @@ const UpdateStudentModal = ({isEditModalVisible, onClose, onSuccess, record}) =>
                            rules={[{required: true, message: 'Please enter last name!'}]} {...formItemLayout}  >
                     <Input placeholder='Enter name' maxLength={30} allowClear/>
                 </Form.Item>
-                <Form.Item label="Phone number" name="phone"
+                <Form.Item label="Phone" name="phone"
                            rules={[{required: true, message: 'Please enter phone number!'}]} {...formItemLayout}  >
                     <Input placeholder='Enter phone number' maxLength={16} allowClear/>
                 </Form.Item>

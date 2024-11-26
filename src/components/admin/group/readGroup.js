@@ -114,7 +114,7 @@ class ReadGroup extends Component {
                 key: 'courseName',
             },
             {
-                title: 'GroupsList username',
+                title: 'Teacher username',
                 dataIndex: 'teacherUsername',
                 key: 'teacherUsername',
             },

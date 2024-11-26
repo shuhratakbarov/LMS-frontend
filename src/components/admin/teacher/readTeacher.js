@@ -2,7 +2,7 @@ import React, {Fragment} from "react";
 import {Component} from "react";
 import {Button, Select, Space, Table} from "antd";
 import axios from "axios";
-import {DeleteOutlined, EditOutlined, FormOutlined, EyeOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, EyeOutlined, UserAddOutlined} from "@ant-design/icons";
 import CreateStudentModal from "./createTeacher";
 import UpdateStudentModal from "./updateTeacher";
 import DeleteStudentModal from "./deleteTeacher";
@@ -231,7 +231,7 @@ class ReadTeacher extends Component {
                     }}
                 >
                 </Table>
-                <Button type="primary" onClick={this.handleAdd} icon={<FormOutlined/>}>
+                <Button type="primary" onClick={this.handleAdd} icon={<UserAddOutlined/>}>
                     New Teacher
                 </Button>
                 {isAddModalVisible && (<CreateStudentModal

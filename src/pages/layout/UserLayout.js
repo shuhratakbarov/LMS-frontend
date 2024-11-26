@@ -1,10 +1,10 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {Layout, Menu, Button, Avatar, Space, Dropdown, Badge, message} from 'antd';
 import {
-    ArrowLeftOutlined,
+    LogoutOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    ProfileOutlined,
+    MoreOutlined,
     SettingOutlined,
     BellOutlined
 } from '@ant-design/icons';
@@ -16,33 +16,35 @@ import {getItems} from '../../server/serverConsts';
 import Clock from '../const/Clock';
 import DashboardService from "../../components/admin/dashboard/dashboardService";
 import AdminDashboard from "../../components/admin/dashboard/AdminDashboard";
+import { useNavigate } from 'react-router-dom';
 
-const imagePath = `../images/farobiy.png`;
+const imagePath = `../images/tuit.png`;
 const {Header, Sider, Content} = Layout;
 
-const UserLayout = () => {
+const UserLayout = ({user}) => {
     const [collapsed, setCollapsed] = useState(false);
     const [menuSelectedKey, setMenuSelectedKey] = useState('1');
-    const [user, setUser] = useState(null);
+    // const [user, setUser] = useState(null);
     // const [menuItems, setMenuItems] = useState([]);
     const [notificationCount, setNotificationCount] = useState([]);
     const location = useLocation();
     const {get, loading} = useAxios();
+    const navigate = useNavigate();
 
-    const getUserInfo = async () => {
-        try {
-            const user = await get(ENDPOINTS.USERINFO);
-            setUser(user);
-            // setMenuItems(getItems(user ? user.roleName : ''));
-        } catch (err) {
-            message.error('Failed to fetch user information');
-        }
-    };
-
-
-    useEffect(() => {
-        getUserInfo(); // Fetch user info when component mounts
-    }, []);
+    // const getUserInfo = async () => {
+    //     try {
+    //         const user = await get(ENDPOINTS.USERINFO);
+    //         setUser(user);
+    //         // setMenuItems(getItems(user ? user.roleName : ''));
+    //     } catch (err) {
+    //         message.error('Failed to fetch user information');
+    //     }
+    // };
+    //
+    //
+    // useEffect(() => {
+    //     getUserInfo(); // Fetch user info when component mounts
+    // }, []);
 
     // const getCount = async () => {
     //     const {user} = this.state;
@@ -86,6 +88,7 @@ const UserLayout = () => {
     }, [location.pathname, menuItems, menuSelectedKey]);
 
     const handleLogOut = () => {
+        navigate("/")
         deleteToken();
         window.location.reload();
     };
@@ -94,16 +97,18 @@ const UserLayout = () => {
         {
             key: '1',
             label: (
-                <p>
-                    <SettingOutlined/>&nbsp;&nbsp;Settings
-                </p>
+                <Link to="/settings">
+                    <p>
+                        <SettingOutlined />&nbsp;&nbsp;Settings
+                    </p>
+                </Link>
             ),
         },
         {
             key: '2',
             label: (
                 <p onClick={handleLogOut}>
-                    <ArrowLeftOutlined/>&nbsp;&nbsp;Logout
+                    <LogoutOutlined />&nbsp;&nbsp;Logout
                 </p>
             )
         },
@@ -134,7 +139,7 @@ const UserLayout = () => {
                                     height: '100%'
                                 }}
                                 src={imagePath}
-                                alt="logo"
+                                alt="tuit"
                             />
                             : <img
                                 style={{
@@ -142,7 +147,7 @@ const UserLayout = () => {
                                     height: '100%'
                                 }}
                                 src={imagePath}
-                                alt="logo"
+                                alt="tuit"
                             />
                         }/>
                         <h2
@@ -210,7 +215,7 @@ const UserLayout = () => {
                             }}
                             placement="bottomRight"
                         >
-                            <p style={{fontSize: "4vh"}}><ProfileOutlined/></p>
+                            <p style={{fontSize: "4vh"}}><MoreOutlined /></p>
                         </Dropdown>
                     </div>
                 </Header>

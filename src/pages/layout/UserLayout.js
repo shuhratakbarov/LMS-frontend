@@ -49,7 +49,7 @@ const UserLayout = ({user}) => {
     // const getCount = async () => {
     //     const {user} = this.state;
     //     if (user?.roleName === 'ROLE_STUDENT') {
-    //         let url = `${serverURL}student/get-count`;
+    //         let url = `${serverURL}students/get-count`;
     //         axios({
     //             url: url,
     //             method: "GET",
@@ -88,9 +88,9 @@ const UserLayout = ({user}) => {
     }, [location.pathname, menuItems, menuSelectedKey]);
 
     const handleLogOut = () => {
-        navigate("/")
         deleteToken();
-        window.location.reload();
+        navigate("/login")
+        // window.location.reload();
     };
 
     const dropDownItems = [
@@ -108,7 +108,7 @@ const UserLayout = ({user}) => {
             key: '2',
             label: (
                 <p onClick={handleLogOut}>
-                    <LogoutOutlined />&nbsp;&nbsp;Logout
+                    <LogoutOutlined />&nbsp;&nbsp;Log out
                 </p>
             )
         },

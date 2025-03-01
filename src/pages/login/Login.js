@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Button, Form, Input, message} from "antd";
 import {setToken} from "../../util/TokenUtil";
 import {ENDPOINTS} from "../../server/endpoints";
@@ -7,21 +7,30 @@ import {
     LoginOutlined,
     LoadingOutlined
 } from '@ant-design/icons';
+import {useNavigate} from "react-router-dom";
 
 const imageLogin = "././login.png";
 const imageTuit = "./tuit.png";
 
 const Login = () => {
     const {post, loading, error} = useAxios();
+    const navigate = useNavigate();
     const onFinish = async (values) => {
         const username = values.username;
         const password = values.password;
         const user = {username, password};
         try {
             const response = await post(ENDPOINTS.LOGIN, user);
-            setToken(response.access_token);
+            if (response.access_token) {
+                setToken(response.access_token);
+                navigate("/dashboard");
+            } else {
+                message.error("login parol xato!");
+                navigate("/login");
+            }
         } catch (err) {
             message.error(error+" || "+ err);
+            navigate("/login");
         }
         window.location.reload();
     };
@@ -40,8 +49,8 @@ const Login = () => {
                 margin: "0 auto",
                 width: "150px",
                 height: "auto",
-                borderRadius: "50%", // Make the image circular
-                objectFit: "cover"   // Ensure the image scales well within the circle
+                borderRadius: "50%",
+                objectFit: "cover"
             }}/>
             <h2 style={{textAlign: "center"}}>Learning Management System</h2>
             <Form
@@ -75,7 +84,7 @@ const Login = () => {
                         htmlType="submit"
                         loading={loading}
                         style={{ width: "61vh" }}>
-                        {loading ? <div><LoadingOutlined /> 'Logging in...'</div>  : <div><LoginOutlined /> Login</div>}
+                        {loading ? <div><LoadingOutlined /> 'Logging in...'</div>  : <div><LoginOutlined /> Log in</div>}
                     </Button>
                 </Form.Item>
             </Form>

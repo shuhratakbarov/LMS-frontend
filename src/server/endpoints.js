@@ -4,10 +4,10 @@ export const ENDPOINTS = {
     USERINFO: 'user/get-user-info',
 //  ---------------  ADMIN  ------------------
     ADMIN_DASHBOARD_STATS: 'admin/dashboard-stats',
-    CREATE_COURSE: 'admin/course/create',
-    GET_COURSE: 'admin/course/get',
-    UPDATE_COURSE: 'admin/course/update',
-    DELETE_COURSE: 'admin/course/delete',
+    CREATE_COURSE: 'admin/courses/create',
+    GET_COURSE: 'admin/courses/get',
+    UPDATE_COURSE: 'admin/courses/update',
+    DELETE_COURSE: 'admin/courses/delete',
 //  --------------  TEACHER  ------------------
 
 

@@ -1,4 +1,4 @@
-export const formatDate = (fetchedDate) => {
+export const    formatDate = (fetchedDate) => {
     const date = new Date(fetchedDate);
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');

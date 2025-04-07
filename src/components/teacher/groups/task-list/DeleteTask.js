@@ -1,54 +1,58 @@
-import React from 'react';
-import {Modal, Form, Input, Button, message, Upload, DatePicker, Typography} from 'antd';
-import axios from "axios";
-import { serverURL } from "../../../../server/serverConsts";
-import { getToken } from "../../../../util/TokenUtil";
-import {CheckOutlined, UploadOutlined} from "@ant-design/icons";
-const {Text} = Typography;
-const DeleteTask = ({ isDeleteTaskVisible, onClose, onSuccess, record, groupId}) => {
-    const onFinish = () => {
-        axios.delete(serverURL + `teacher/delete-task/${record.id}`,{
-            headers:{
-                Authorization: `Bearer ${getToken()}`
-            }})
-            .then((response) => {
-                console.log(response.data);
-                if (response.data.success) {
-                    message.success('Task deleted successfully');
-                    onSuccess();
-                    onClose();
-                } else {
-                    message.error(response.data.message);
-                    onClose();
-                }
-            })
-            .catch((error) => {
-                console.log(error)
-                message.error('An error occurred while deleting the task');
-            });
-    };
+import { Modal, Button, message, Typography } from "antd";
+import { CheckOutlined } from "@ant-design/icons";
+import { deleteTeacherTask } from "../../../../services/api-client";
 
-    const handleCancel = () => {
-        message.info("O'chirish bekor qilindi");
+const { Text } = Typography;
+
+const DeleteTask = ({ isOpen, onSuccess, onClose, record }) => {
+  const onFinish = async () => {
+    try {
+      const response = await deleteTeacherTask(record.id);
+      const { success, message: errorMessage } = response.data;
+      if (success) {
+        message.success("Task deleted successfully");
+        onSuccess();
         onClose();
-    };
+      } else {
+        message.error(errorMessage || "Failed to delete task");
+        onClose();
+      }
+    } catch (error) {
+      message.error(error.message || "An error occurred while deleting the task");
+    }
+  };
 
-    return (
-        <Modal
-            title="Delete the task"
-            open={isDeleteTaskVisible}
-            onCancel={handleCancel}
-            footer={null}
+  const handleCancel = () => {
+    message.info("Task deletion cancelled");
+    onClose();
+  };
+
+  return (
+    <Modal
+      title="Delete Task"
+      open={isOpen}
+      onCancel={handleCancel}
+      footer={null}
+    >
+      <Text type="danger">
+        Are you sure you want to delete the task <b>{record.taskName}</b>?
+      </Text>
+      <div style={{ marginTop: "16px" }}>
+        <Button
+          type="primary"
+          danger
+          onClick={onFinish}
+          icon={<CheckOutlined />}
+          style={{ marginRight: "8px" }}
         >
-            <Text type="danger">Rostdan ham <b>{record.taskName}</b> topshirig'ini o'chirmoqchimisiz?</Text>
-            <br/>
-            <br/>
-            <Button type="primary" danger htmlType="submit" onClick={onFinish}
-                    icon={<CheckOutlined/>}>
-                Ha
-            </Button>
-        </Modal>
-    );
+          Yes
+        </Button>
+        <Button onClick={handleCancel} type="default">
+          No
+        </Button>
+      </div>
+    </Modal>
+  );
 };
 
 export default DeleteTask;

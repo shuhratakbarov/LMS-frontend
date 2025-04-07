@@ -1,0 +1,22 @@
+/* Custom layout adjustments */
+.site-layout {
+    transition: margin 0.2s;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .site-layout {
+        margin-left: 0 !important;
+    }
+
+    .ant-layout-sider-collapsed {
+        margin-left: -80px;
+    }
+}
+
+/* Logo styling */
+.demo-logo-vertical {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}

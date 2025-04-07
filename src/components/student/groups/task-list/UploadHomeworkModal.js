@@ -1,85 +1,64 @@
-import React from 'react';
-import { Modal, Form, Input, Button, message, Upload, DatePicker, Typography } from 'antd';
-import axios from "axios";
-import { serverURL } from "../../../../server/serverConsts";
-import { getToken } from "../../../../util/TokenUtil";
+import { Modal, Form, Button, message, Upload, Typography, Space } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { reUploadHomework, uploadHomework } from "../../../../services/api-client";
 
-const {Text} = Typography;
+const { Text } = Typography;
 
-const UploadHomeworkModal = ({ isUploadHomeworkVisible, onClose, onSuccess, taskId, homeworkId}) => {
-    const [form] = Form.useForm();
-    const onFinish = (values) => {
-        const formData = new FormData();
-        formData.append('file', values.file.file);
-        let url;
-        let method;
-        if (homeworkId == null) {
-            url = serverURL + `student/upload-homework/${taskId}`;
-            method = "POST";
-        } else {
-            url = serverURL + `student/re-upload-homework/${taskId}?homeworkId=${homeworkId}`;
-            method = "PUT";
-        }
-        axios({
-            url: url,
-            method: method,
-            data: formData,
-            headers: {
-                Accept: 'application/json, text/plain, */*',
-                "Content-Type": 'multipart/form-data',
-                Authorization: `Bearer ${getToken()}`
-            }
-        }).then((response) => {
-                if (response.data.success) {
-                    console.log(response.data)
-                    message.success('Homework uploaded successfully');
-                    form.resetFields();
-                    onSuccess();
-                    onClose();
-                } else {
-                    message.error(response.data.message);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-                message.error('An error occurred while uploading the homework');
-            });
-    };
+const UploadHomeworkModal = ({ isOpen, onClose, onSuccess, taskId, homeworkId }) => {
+  const onFinish = async (values) => {
+    const formData = new FormData();
+    formData.append("file", values.file.file);
 
-    const handleCancel = () => {
-        message.info("Uploading cancelled");
-        form.resetFields();
-        onClose();
-    };
+    try {
+      const response = await homeworkId == null ? uploadHomework(taskId, formData) : await reUploadHomework(homeworkId, taskId, formData);
+      const { success, message: errorMessage } = response.data;
+      if (success) {
+        message.success("StudentHomeworkList uploaded successfully");
+        onSuccess();
+      } else {
+        message.error(errorMessage || "Failed to upload homework");
+      }
+    } catch (error) {
+      message.error(error.message || "An error occurred while uploading the homework");
+    }
+  };
 
-    return (
-        <Modal
-            title="Upload Homework"
-            open={isUploadHomeworkVisible}
-            onCancel={handleCancel}
-            footer={null}
+  const handleCancel = () => {
+    message.info("Uploading cancelled");
+    onClose();
+  };
+
+  return (
+    <Modal
+      title={homeworkId == null ? "Upload StudentHomeworkList" : "Re-upload StudentHomeworkList"}
+      open={isOpen}
+      onCancel={handleCancel}
+      footer={null}
+      destroyOnClose={true}
+    >
+      <Form onFinish={onFinish} size="large" layout="vertical">
+        <Text type="warning">Only one file can be uploaded!</Text>
+        <Form.Item
+          label="File"
+          name="file"
+          rules={[{ required: true, message: "Please upload a file!" }]}
+          style={{ marginTop: "16px" }}
         >
-            <Form form={form} onFinish={onFinish} size="large">
-                <Text type={"warning"}> Faqat bitta fayl yuklash mumkin!</Text>
-                <br/><br/>
-                <Form.Item label="File" name="file" rules={[{required: true, message: 'Please upload a file!'}]}
-                           encType="multipart/form-data">
-                    <Upload beforeUpload={() => false} maxCount={1}>
-                        <Button icon={<UploadOutlined/>}>Yuklash</Button>
-                    </Upload>
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Submit
-                    </Button>
-                    <Button onClick={handleCancel} type="default">
-                        Cancel
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
-    );
+          <Upload beforeUpload={() => false} maxCount={1}>
+            <Button icon={<UploadOutlined />}>Upload</Button>
+          </Upload>
+        </Form.Item>
+        <Space>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+          <Button onClick={handleCancel} type="default">
+            Cancel
+          </Button>
+        </Space>
+      </Form>
+    </Modal>
+  );
 };
 
 export default UploadHomeworkModal;

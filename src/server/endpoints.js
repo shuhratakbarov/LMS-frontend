@@ -1,17 +1,21 @@
 export const ENDPOINTS = {
-//  ---------------  OPEN  -------------------
-    LOGIN: 'auth/login',
-    USERINFO: 'user/get-user-info',
-//  ---------------  ADMIN  ------------------
-    ADMIN_DASHBOARD_STATS: 'admin/dashboard-stats',
-    CREATE_COURSE: 'admin/courses/create',
-    GET_COURSE: 'admin/courses/get',
-    UPDATE_COURSE: 'admin/courses/update',
-    DELETE_COURSE: 'admin/courses/delete',
-//  --------------  TEACHER  ------------------
-
-
-// ---------------  STUDENT  ------------------
-
-
+  //  ---------------  AUTH  --------------------
+  LOGIN: "auth/login",
+  LOGOUT: "auth/logout",
+  REFRESH: "auth/refresh",
+  //  ---------------  ADMIN  -------------------
+  ADMIN_DASHBOARD: "admin/dashboard",
+  ADMIN_COURSE: "admin/course",
+  ADMIN_GROUP: "admin/group",
+  ADMIN_USER: "admin/user",
+  //  --------------  TEACHER  ------------------
+  TEACHER_GROUP: "teacher/group",
+  TEACHER_TASK: "teacher/task",
+  TEACHER_HOMEWORK: "teacher/homework",
+  // ---------------  STUDENT  ------------------
+  STUDENT_GROUP: "student/group",
+  STUDENT_HOMEWORK: "student/homework",
+  // ---------------  SHARED ------------------
+  DOWNLOAD: "download",
+  USERINFO: "user-info",
 };

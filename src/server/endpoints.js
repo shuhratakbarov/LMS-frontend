@@ -7,7 +7,9 @@ export const ENDPOINTS = {
   ADMIN_DASHBOARD: "admin/dashboard",
   ADMIN_COURSE: "admin/course",
   ADMIN_GROUP: "admin/group",
+  ADMIN_LESSON_SCHEDULE: "admin/lesson-schedule",
   ADMIN_USER: "admin/user",
+  ADMIN_ROOM: "admin/room",
   //  --------------  TEACHER  ------------------
   TEACHER_GROUP: "teacher/group",
   TEACHER_TASK: "teacher/task",
@@ -15,7 +17,7 @@ export const ENDPOINTS = {
   // ---------------  STUDENT  ------------------
   STUDENT_GROUP: "student/group",
   STUDENT_HOMEWORK: "student/homework",
-  // ---------------  SHARED ------------------
+  // ---------------  SHARED --------------------
   DOWNLOAD: "download",
   USERINFO: "user-info",
 };

@@ -1,0 +1,56 @@
+.table {
+    min-width: 100%;
+    border-collapse: collapse;
+}
+
+.th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    background-color: #f5f5f5;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.td {
+    border: 1px solid #ddd;
+    padding: 0; /* Remove padding to let the inner div fill the cell */
+    height: 60px;
+    vertical-align: top;
+}
+
+.lessonCell {
+    background-color: #ff4d4f;
+    color: white;
+    padding: 4px;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer; /* Add cursor pointer on hover */
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.lessonCell:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.emptyCell {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.td:hover .emptyCell {
+    opacity: 1;
+}
+
+.plusIcon {
+    font-size: 24px;
+    color: #8c8c8c;
+}

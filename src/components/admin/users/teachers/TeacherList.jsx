@@ -1,13 +1,13 @@
 import { Fragment, useState, useEffect, useCallback } from "react";
-import { Button, Space, Table, message, Tag, theme, Typography } from "antd";
+import { Button, Space, Table, message, Tag, Typography } from "antd";
 import { DeleteOutlined, EditOutlined, UserAddOutlined, EyeOutlined} from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import AddTeacherModal from "./AddTeacher";
 import ViewGroupsOfTeacher from "./ViewGroupsOfTeacher";
 import UpdateTeacherModal from "./UpdateTeacher";
 import DeleteTeacherModal from "./DeleteTeacher";
-import { getTeacherList } from "../../../services/api-client";
-import { formatDate } from "../../../const/FormatDate";
+import { getTeacherList } from "../../../../services/api-client";
+import { formatDate } from "../../../../const/FormatDate";
 
 const { Title } = Typography;
 const TeacherList = () => {
@@ -25,14 +25,11 @@ const TeacherList = () => {
   const [teacherToViewGroups, setTeacherToViewGroups] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const { token } = theme.useToken();
-
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await getTeacherList(searchText, page, size);
       const { success, data, message: errorMessage } = response.data;
-      console.log(data);
       if (success) {
         setDataSource(data.content.content);
         setTotalElements(data.totalElements);
@@ -100,13 +97,14 @@ const TeacherList = () => {
       title: "No",
       dataIndex: "index",
       key: "index",
+      width: 60,
       render: (text, record, index) => page * size + index + 1,
     },
     {
       title: "First Name",
       dataIndex: "firstName",
       key: "firstName",
-      width: 120,
+      width: 150,
       ellipsis: true,
       sorter: (a, b) => a.firstName.localeCompare(b.firstName),
       filters: [
@@ -119,7 +117,7 @@ const TeacherList = () => {
       title: "Last Name",
       dataIndex: "lastName",
       key: "lastName",
-      width: 120,
+      width: 150,
       ellipsis: true,
       sorter: (a, b) => a.lastName.localeCompare(b.lastName),
       filters: [
@@ -132,7 +130,7 @@ const TeacherList = () => {
       title: "Username",
       dataIndex: "username",
       key: "username",
-      width: 120,
+      width: 150,
       ellipsis: true,
       sorter: (a, b) => a.username.localeCompare(b.username),
       filters: [
@@ -188,8 +186,9 @@ const TeacherList = () => {
       ),
     },
     {
-      title: "Action",
+      title: "View  |  Edit  |   Delete",
       key: "action",
+      width: 175,
       render: (record) => (
         <Space size="middle">
           <Button

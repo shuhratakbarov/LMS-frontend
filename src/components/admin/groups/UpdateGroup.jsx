@@ -1,24 +1,39 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Modal, Form, Input, Button, message, Select } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
-import { getCourseIdAndName, getTeacherIdAndUsername, updateGroup } from "../../../services/api-client";
+import { updateGroup, getCourseIdAndName, getTeacherIdAndUsername } from "../../../services/api-client";
+
+const { Option } = Select;
 
 const UpdateGroupModal = ({ isOpen, onClose, onSuccess, group }) => {
-  const [options, setOptions] = useState([]);
+  const [form] = Form.useForm();
+  const [courseOptions, setCourseOptions] = useState([]);
+  const [teacherOptions, setTeacherOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (group) {
+      form.setFieldsValue({
+        name: group.name,
+        description: group.description,
+        courseId: group.courseId,
+        teacherId: group.teacherId,
+        roomId: group.roomId,
+        time: group.time,
+        days: group.days,
+      });
+    }
+  }, [group, form]);
+
   const fetchCourses = async () => {
     try {
       setLoading(true);
       const response = await getCourseIdAndName();
       const dto = response.data;
       if (dto.success) {
-        const jsonData = dto.data;
-        const mappedOptions = jsonData.map((item) => (
-          <Select.Option key={item.id} value={item.id}>
-            {item.name}
-          </Select.Option>
-        ));
-        setOptions(mappedOptions);
+        setCourseOptions(dto.data.map(item => (
+          <Option key={item.id} value={item.id}>{item.name}</Option>
+        )));
       } else {
         message.error(dto.message);
       }
@@ -28,19 +43,16 @@ const UpdateGroupModal = ({ isOpen, onClose, onSuccess, group }) => {
       setLoading(false);
     }
   };
+
   const fetchTeachers = async () => {
     try {
       setLoading(true);
       const response = await getTeacherIdAndUsername();
       const dto = response.data;
       if (dto.success) {
-        const jsonData = dto.data;
-        const mappedOptions = jsonData.map((item) => (
-          <Select.Option key={item.id} value={item.id}>
-            {item.username}
-          </Select.Option>
-        ));
-        setOptions(mappedOptions);
+        setTeacherOptions(dto.data.map(item => (
+          <Option key={item.id} value={item.id}>{item.username}</Option>
+        )));
       } else {
         message.error(dto.message);
       }
@@ -50,9 +62,10 @@ const UpdateGroupModal = ({ isOpen, onClose, onSuccess, group }) => {
       setLoading(false);
     }
   };
+
   const handleSubmit = async (values) => {
     try {
-      const response = await updateGroup(group.id, JSON.stringify(values));
+      const response = await updateGroup(group.id, values);
       const { success, message: responseMessage } = response.data;
       if (success) {
         message.success("Group updated successfully");
@@ -61,7 +74,7 @@ const UpdateGroupModal = ({ isOpen, onClose, onSuccess, group }) => {
         message.error(responseMessage || "Failed to update group");
       }
     } catch (error) {
-      message.error("An error occurred while updating the group");
+      message.error(error.response?.data?.message || "An error occurred while updating the group");
     }
   };
 
@@ -76,13 +89,12 @@ const UpdateGroupModal = ({ isOpen, onClose, onSuccess, group }) => {
       open={isOpen}
       onCancel={handleCancel}
       footer={null}
-      onOk={onSuccess}
       destroyOnClose={true}
     >
       <Form
+        form={form}
         onFinish={handleSubmit}
-        size={"large"}
-        initialValues={group}
+        size="large"
         layout="vertical"
       >
         <Form.Item
@@ -93,33 +105,31 @@ const UpdateGroupModal = ({ isOpen, onClose, onSuccess, group }) => {
           <Input placeholder="Enter name" maxLength={25} allowClear />
         </Form.Item>
         <Form.Item
-          label="Course name"
+          label="Course"
           name="courseId"
-          rules={[{ required: true, message: "Please select courses name!" }]}
+          rules={[{ required: true, message: "Please select course!" }]}
         >
           <Select
             placeholder="Select course"
             allowClear
             onClick={fetchCourses}
             loading={loading}
-            defaultValue={group.courseName}
           >
-            {options}
+            {courseOptions}
           </Select>
         </Form.Item>
         <Form.Item
           label="Teacher"
           name="teacherId"
-          rules={[{ required: true, message: "Please select a teachers!" }]}
+          rules={[{ required: true, message: "Please select a teacher!" }]}
         >
           <Select
-            placeholder="Select course"
+            placeholder="Select teacher"
             allowClear
             onClick={fetchTeachers}
             loading={loading}
-            defaultValue={group.teacherUsername}
           >
-            {options}
+            {teacherOptions}
           </Select>
         </Form.Item>
         <Form.Item
@@ -135,7 +145,11 @@ const UpdateGroupModal = ({ isOpen, onClose, onSuccess, group }) => {
           />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" icon={<CheckOutlined />}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            icon={<CheckOutlined />}
+          >
             Submit
           </Button>
         </Form.Item>

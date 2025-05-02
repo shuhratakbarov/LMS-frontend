@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, message } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import { editUser } from "../../../services/api-client";
+import { editUser } from "../../../../services/api-client";
 
 const UpdateTeacherModal = ({ isOpen, onSuccess, onClose, teacher }) => {
   const [form] = Form.useForm();

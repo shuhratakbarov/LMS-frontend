@@ -1,49 +1,48 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button, Space, Table, message, Typography } from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import CreateCourseModal from "./CreateCourse";
-import UpdateCourseModal from "./UpdateCourse";
-import DeleteCourseModal from "./DeleteCourse";
-import { getCourseList } from "../../../services/api-client";
-import { formatDate } from "../../../const/FormatDate";
+import CreateRoomModal from "./CreateRoom";
+import UpdateRoomModal from "./UpdateRoom";
+import DeleteRoomModal from "./DeleteRoom";
+import { getRoomList } from "../../../services/api-client";
 import Search from "antd/es/input/Search";
 
 const { Title } = Typography;
-const CourseList = () => {
-  const [courses, setCourses] = useState([]);
+
+const RoomList = () => {
+  const [rooms, setRooms] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [courseToUpdate, setCourseToUpdate] = useState(null);
-  const [courseToDelete, setCourseToDelete] = useState(null);
+  const [roomToUpdate, setRoomToUpdate] = useState(null);
+  const [roomToDelete, setRoomToDelete] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchCourses = useCallback(async () => {
+  const fetchRooms = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getCourseList(searchQuery, currentPage, pageSize);
+      const response = await getRoomList();
       const { success, data, message: errorMessage } = response.data;
       if (success) {
-        setCourses(data.content);
-        setTotalItems(data.totalElements);
+        setRooms(data);
+        setTotalItems(data.length);
       } else {
-        message.error(errorMessage || "Failed to fetch courses");
+        message.error(errorMessage || "Failed to fetch rooms");
       }
     } catch (error) {
-      console.error("Error fetching courses:", error);
-      message.error("Failed to load courses due to a network error");
+      console.error("Error fetching rooms:", error);
+      message.error("Failed to load rooms due to a network error");
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, pageSize, searchQuery]);
+  }, []);
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
+    fetchRooms();
+  }, [fetchRooms]);
 
   const handlePaginationChange = (page) => {
     setCurrentPage(page - 1);
@@ -51,25 +50,24 @@ const CourseList = () => {
 
   const handlePageSizeChange = (current, size) => {
     setPageSize(size);
-    setCurrentPage(0); // Reset to first page on size change
+    setCurrentPage(0);
   };
 
   const handleSearch = (value) => {
-    setSearchQuery(value);
-    setCurrentPage(0); // Reset to first page on search
+    setCurrentPage(0);
   };
 
   const handleCreate = () => {
     setIsCreateModalOpen(true);
   };
 
-  const handleUpdate = (course) => {
-    setCourseToUpdate(course);
+  const handleUpdate = (room) => {
+    setRoomToUpdate(room);
     setIsUpdateModalOpen(true);
   };
 
   const handleDelete = (id, name) => {
-    setCourseToDelete({ id, name });
+    setRoomToDelete({ id, name });
     setIsDeleteModalOpen(true);
   };
 
@@ -77,12 +75,12 @@ const CourseList = () => {
     setIsCreateModalOpen(false);
     setIsUpdateModalOpen(false);
     setIsDeleteModalOpen(false);
-    setCourseToUpdate(null);
-    setCourseToDelete({ id: null, name: "" });
+    setRoomToUpdate(null);
+    setRoomToDelete({ id: null, name: "" });
   };
 
   const handleSuccess = () => {
-    fetchCourses();
+    fetchRooms();
     handleModalClose();
   };
 
@@ -105,25 +103,9 @@ const CourseList = () => {
       onFilter: (value, record) => record.name.startsWith(value),
     },
     {
-      title: "Duration",
-      dataIndex: "duration",
-      key: "duration",
-      width: 150,
-      sorter: (a, b) => a.duration- b.duration,
-    },
-    {
-      title: "Created At",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (date) => formatDate(date),
-      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-    },
-    {
-      title: "Updated At",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (date) => formatDate(date),
-      sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
     },
     {
       title: " Edit   |   Delete",
@@ -149,19 +131,19 @@ const CourseList = () => {
   const expandableConfig = {
     expandedRowRender: (record) => (
       <p style={{ margin: 0 }}>
-        <strong>Description:</strong> {record.description}
+        <strong>Description:</strong> {record.description || "No description"}
       </p>
     ),
-    rowExpandable: (record) => record.description !== "No expandable content",
+    rowExpandable: (record) => true,
   };
 
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Title level={2}>Courses</Title>
+        <Title level={2}>Rooms</Title>
         <div>
           <Search
-            placeholder="Search courses..."
+            placeholder="Search rooms..."
             onSearch={handleSearch}
             enterButton
             style={{ width: 250 }}
@@ -172,12 +154,12 @@ const CourseList = () => {
             onClick={handleCreate}
             style={{ marginLeft: "16px" }}
           >
-            New Course
+            New Room
           </Button>
         </div>
       </div>
       <Table
-        dataSource={courses}
+        dataSource={rooms}
         columns={columns}
         rowKey="id"
         expandable={expandableConfig}
@@ -196,35 +178,28 @@ const CourseList = () => {
         loading={isLoading}
         scroll={{ x: "max-content", y: 325 }}
         sticky
-        title={() => <strong>Course List</strong>}
-        footer={() => `Total Courses: ${totalItems}`}
+        title={() => <strong>Room List</strong>}
+        footer={() => `Total Rooms: ${totalItems}`}
       />
-
-      {isCreateModalOpen && (
-        <CreateCourseModal
+        <CreateRoomModal
           isOpen={isCreateModalOpen}
           onClose={handleModalClose}
           onSuccess={handleSuccess}
         />
-      )}
-      {isUpdateModalOpen && (
-        <UpdateCourseModal
+        <UpdateRoomModal
           isOpen={isUpdateModalOpen}
           onClose={handleModalClose}
           onSuccess={handleSuccess}
-          course={courseToUpdate}
+          room={roomToUpdate}
         />
-      )}
-      {isDeleteModalOpen && (
-        <DeleteCourseModal
+        <DeleteRoomModal
           isOpen={isDeleteModalOpen}
           onClose={handleModalClose}
           onSuccess={handleSuccess}
-          course={courseToDelete}
+          room={roomToDelete}
         />
-      )}
     </div>
   );
 };
 
-export default CourseList;
+export default RoomList;

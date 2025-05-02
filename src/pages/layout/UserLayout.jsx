@@ -9,7 +9,7 @@ import {
   BellOutlined
 } from "@ant-design/icons";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { getMenuItems } from "../../server/serverConsts";
+import { getMenuItems } from "../../const/MenuItems";
 import Clock from "../const/Clock";
 import { deleteAuthData, getAccessToken } from "../../utils/auth";
 import { logout } from "../../services/api-client";
@@ -197,7 +197,8 @@ const UserLayout = ({ user }) => {
             padding: 24,
             background: "#ffffff",
             borderRadius: 8,
-            minHeight: "calc(100vh - 112px)"
+            minHeight: "calc(100vh - 112px)",
+            overflow: "hidden" // Add this to prevent Content from handling overflow
           }}
         >
           <Outlet />

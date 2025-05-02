@@ -3,22 +3,23 @@ import { Modal, Form, Input, Button, message, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { createGroup, getCourseIdAndName, getTeacherIdAndUsername } from "../../../services/api-client";
 
+const { Option } = Select;
+
 const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
-  const [options, setOptions] = useState([]);
+  const [form] = Form.useForm();
+  const [courseOptions, setCourseOptions] = useState([]);
+  const [teacherOptions, setTeacherOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const fetchCourses = async () => {
     try {
       setLoading(true);
       const response = await getCourseIdAndName();
       const dto = response.data;
       if (dto.success) {
-        const jsonData = dto.data;
-        const mappedOptions = jsonData.map((item) => (
-          <Select.Option key={item.id} value={item.id}>
-            {item.name}
-          </Select.Option>
-        ));
-        setOptions(mappedOptions);
+        setCourseOptions(dto.data.map(item => (
+          <Option key={item.id} value={item.id}>{item.name}</Option>
+        )));
       } else {
         message.error(dto.message);
       }
@@ -28,19 +29,16 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
       setLoading(false);
     }
   };
+
   const fetchTeachers = async () => {
     try {
       setLoading(true);
       const response = await getTeacherIdAndUsername();
       const dto = response.data;
       if (dto.success) {
-        const jsonData = dto.data;
-        const mappedOptions = jsonData.map((item) => (
-          <Select.Option key={item.id} value={item.id}>
-            {item.username}
-          </Select.Option>
-        ));
-        setOptions(mappedOptions);
+        setTeacherOptions(dto.data.map(item => (
+          <Option key={item.id} value={item.id}>{item.username}</Option>
+        )));
       } else {
         message.error(dto.message);
       }
@@ -50,9 +48,10 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
       setLoading(false);
     }
   };
+
   const handleSubmit = async (values) => {
     try {
-      const response = await createGroup(JSON.stringify(values));
+      const response = await createGroup(values);
       const { success, message: responseMessage } = response.data;
       if (success) {
         message.success("Group added successfully");
@@ -61,7 +60,7 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
         message.error(responseMessage || "Failed to add group");
       }
     } catch (error) {
-      message.error("An error occurred while adding the group");
+      message.error(error.response?.data?.message || "An error occurred while adding the group");
     }
   };
 
@@ -75,11 +74,15 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
       title="Add New Group"
       open={isOpen}
       onCancel={handleCancel}
-      footer={"Bu footer"}
-      onOk={onSuccess}
+      footer={null}
       destroyOnClose={true}
     >
-      <Form onFinish={handleSubmit} size={"large"} layout="vertical">
+      <Form
+        form={form}
+        onFinish={handleSubmit}
+        size="large"
+        layout="vertical"
+      >
         <Form.Item
           label="Name"
           name="name"
@@ -90,7 +93,7 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
         <Form.Item
           label="Course"
           name="courseId"
-          rules={[{ required: true, message: "Please select courses name!" }]}
+          rules={[{ required: true, message: "Please select course!" }]}
         >
           <Select
             placeholder="Select course"
@@ -98,13 +101,13 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
             onClick={fetchCourses}
             loading={loading}
           >
-            {options}
+            {courseOptions}
           </Select>
         </Form.Item>
         <Form.Item
           label="Teacher"
           name="teacherId"
-          rules={[{ required: true, message: "Please select a teachers!" }]}
+          rules={[{ required: true, message: "Please select a teacher!" }]}
         >
           <Select
             placeholder="Select teacher"
@@ -112,9 +115,10 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
             onClick={fetchTeachers}
             loading={loading}
           >
-            {options}
+            {teacherOptions}
           </Select>
         </Form.Item>
+
         <Form.Item
           label="Description"
           name="description"
@@ -128,7 +132,11 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess }) => {
           />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" icon={<PlusOutlined />}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            icon={<PlusOutlined />}
+          >
             Add Group
           </Button>
         </Form.Item>

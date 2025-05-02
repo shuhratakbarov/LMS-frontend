@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
 import { Modal, Form, Input, Button, message, Select, DatePicker } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { addUser, getGroupIdAndName } from "../../../services/api-client";
+import { addUser, getGroupIdAndName } from "../../../../services/api-client";
 
-const AddTeacherModal = ({ isOpen, onSuccess, onCancel }) => {
+const AddStudentModal = ({ isOpen, onSuccess, hideModal }) => {
   const [options, setOptions] = useState([]);
   const [fetchingGroups, setFetchingGroups] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -33,44 +33,44 @@ const AddTeacherModal = ({ isOpen, onSuccess, onCancel }) => {
   const onFinish = async (values) => {
     setSubmitting(true);
     try {
-      const teacher = {
+      const student = {
         ...values,
-        roleId: 2,
+        roleId: 3,
         birthDate: values.birthDate ? values.birthDate.format("YYYY-MM-DD") : null,
       };
-      const response = await addUser(teacher);
+      const response = await addUser(student);
       const { success, message: responseMessage } = response.data;
       if (success) {
-        message.success("Teacher successfully added");
+        message.success("Student successfully added");
         onSuccess();
       } else {
-        message.error(responseMessage || "Failed to add teacher");
+        message.error(responseMessage || "Failed to add student");
       }
     } catch (error) {
-      message.error(error.message || "An error occurred while adding the teacher");
+      message.error(error.message || "An error occurred while adding the student");
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    message.info("Adding teacher canceled");
-    onCancel();
+    message.info("Adding student canceled");
+    hideModal();
   };
 
   return (
     <Modal
-      title="Add New Teacher"
+      title="Add New Student"
       open={isOpen}
       onCancel={handleCancel}
       footer={null}
-      destroyOnClose
+      destroyOnClose={true}
     >
       <Form
         onFinish={onFinish}
         size="large"
         layout="vertical"
-        initialValues={{ roleId: 2 }}
+        initialValues={{ roleId: 3 }}
       >
         <Form.Item name="roleId" hidden>
           <Input />
@@ -157,9 +157,9 @@ const AddTeacherModal = ({ isOpen, onSuccess, onCancel }) => {
           name="password"
           rules={[
             { required: true, message: "Please enter a password!" },
-            { min: 8, message: "Password must be at least 8 characters!" },
+            { min: 5, message: "Password must be at least 8 characters!" },
             { max: 32, message: "Password cannot exceed 32 characters!" },
-            { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, message: "Password must contain at least one letter and one number!" },
+            { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{5,}$/, message: "Password must contain at least one letter and one number!" },
           ]}
         >
           <Input.Password placeholder="Enter a password" allowClear />
@@ -182,7 +182,7 @@ const AddTeacherModal = ({ isOpen, onSuccess, onCancel }) => {
             loading={submitting}
             disabled={submitting}
           >
-            Add Teacher
+            Add Student
           </Button>
         </Form.Item>
       </Form>
@@ -190,4 +190,4 @@ const AddTeacherModal = ({ isOpen, onSuccess, onCancel }) => {
   );
 };
 
-export default AddTeacherModal;
+export default AddStudentModal;

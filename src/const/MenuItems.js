@@ -1,6 +1,5 @@
 import {
   GroupOutlined,
-  TeamOutlined,
   DashboardOutlined,
   BookOutlined,
   UserOutlined,
@@ -10,9 +9,11 @@ import {
   InboxOutlined,
   MailOutlined,
   BarChartOutlined,
+  BankOutlined,
+  ScheduleOutlined,
+  TeamOutlined
 } from "@ant-design/icons";
 
-export const serverURL = "http://localhost:8082/api/";
 export const getMenuItems = (role) => {
   let items;
   if (role === "ROLE_ADMIN") {
@@ -23,35 +24,41 @@ export const getMenuItems = (role) => {
         label: <p>Dashboard</p>,
         path: "/dashboard",
       },
+      // {
+      //   key: 2,
+      //   icon: <UserOutlined />,
+      //   label: "Profile",
+      //   path: "/profile",
+      // },
       {
         key: 2,
-        icon: <UserOutlined />,
-        label: "Profile",
-        path: "/profile",
-      },
-      {
-        key: 3,
         icon: <BookOutlined />,
         label: <p>Courses</p>,
         path: "/courses",
       },
       {
-        key: 4,
+        key: 3,
         icon: <GroupOutlined />,
         label: <p>Groups</p>,
         path: "/groups",
       },
       {
+        key: 4,
+        icon: <ScheduleOutlined />,
+        label: <p>Lesson schedules</p>,
+        path: "/lesson-schedules",
+      },
+      {
         key: 5,
         icon: <TeamOutlined />,
-        label: <p>Teachers</p>,
-        path: "/teachers",
+        label: <p>Users</p>,
+        path: "/users",
       },
       {
         key: 6,
-        icon: <TeamOutlined />,
-        label: <p>Students</p>,
-        path: "/students",
+        icon: <BankOutlined />,
+        label: <p>Rooms</p>,
+        path: "/rooms",
       },
       {
         key: 7,

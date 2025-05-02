@@ -6,8 +6,8 @@ import AddStudentModal from "./AddStudent";
 import ViewGroupsOfStudent from "./ViewGroupsOfStudent";
 import UpdateStudentModal from "./UpdateStudent";
 import DeleteStudentModal from "./DeleteStudent";
-import { getStudentList } from "../../../services/api-client";
-import { formatDate } from "../../../const/FormatDate";
+import { getStudentList } from "../../../../services/api-client";
+import { formatDate } from "../../../../const/FormatDate";
 
 const { Title } = Typography;
 const StudentList = () => {
@@ -97,12 +97,14 @@ const StudentList = () => {
       title: "No",
       dataIndex: "index",
       key: "index",
+      width: 60,
       render: (text, record, index) => page * size + index + 1,
     },
     {
       title: "First Name",
       dataIndex: "firstName",
       key: "firstName",
+      width: 150,
       sorter: (a, b) => a.firstName.localeCompare(b.firstName),
       filters: [
         { text: "Starts with A", value: "A" },
@@ -114,6 +116,7 @@ const StudentList = () => {
       title: "Last Name",
       dataIndex: "lastName",
       key: "lastName",
+      width: 150,
       sorter: (a, b) => a.lastName.localeCompare(b.lastName),
       filters: [
         { text: "Starts with A", value: "A" },
@@ -125,6 +128,7 @@ const StudentList = () => {
       title: "Username",
       dataIndex: "username",
       key: "username",
+      width: 150,
       sorter: (a, b) => a.username.localeCompare(b.username),
       filters: [
         { text: "Starts with A", value: "A" },
@@ -179,8 +183,9 @@ const StudentList = () => {
       ),
     },
     {
-      title: "Action",
+      title: "View  |  Edit  |   Delete",
       key: "action",
+      width: 175,
       render: (record) => (
         <Space size="middle">
           <Button

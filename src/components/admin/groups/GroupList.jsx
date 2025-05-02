@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ArrowRightOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import { formatDate } from "../../../const/FormatDate";
-import { getGroupList, getGroupListBySearch } from "../../../services/api-client";
+import { getGroupList } from "../../../services/api-client";
 import UpdateGroupModal from "./UpdateGroup";
 import DeleteGroupModal from "./DeleteGroup";
 import CreateGroupModal from "./CreateGroup";
@@ -26,9 +26,7 @@ const GroupList = () => {
   const fetchGroups = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = searchQuery
-        ? await getGroupListBySearch(searchQuery, currentPage, pageSize)
-        : await getGroupList(currentPage, pageSize);
+      const response = await getGroupList(searchQuery, currentPage, pageSize);
       const { success, data, message: errorMessage } = response.data;
       if (success) {
         setGroups(data.content);
@@ -89,6 +87,7 @@ const GroupList = () => {
       title: "No",
       dataIndex: "index",
       key: "index",
+      width: 60,
       render: (_, __, index) => currentPage * pageSize + index + 1,
     },
     {
@@ -138,7 +137,7 @@ const GroupList = () => {
       sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
     },
     {
-      title: "Action",
+      title: "Edit  |  Delete  |   Enter",
       key: "action",
       render: (record) => (
         <Space size="middle">

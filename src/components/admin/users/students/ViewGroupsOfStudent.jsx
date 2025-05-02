@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Modal, Table, message } from "antd";
-import { getGroupsOfStudent } from "../../../services/api-client";
+import { getGroupsOfStudent } from "../../../../services/api-client";
 
 const ViewGroupsOfStudent = ({ isOpen, student, onClose }) => {
   const [data, setData] = useState([]);

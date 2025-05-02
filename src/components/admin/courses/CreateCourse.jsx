@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { Modal, Form, Input, Button, message } from "antd";
+import { Modal, Form, Input, Button, message, InputNumber } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { createCourse } from "../../../services/api-client";
 
@@ -47,6 +47,19 @@ const CreateCourseModal = ({ isOpen, onClose, onSuccess }) => {
           <Input
             placeholder="Enter course name"
             maxLength={25}
+            allowClear
+            autoComplete="off"
+          />
+        </Form.Item>
+        <Form.Item
+          name="duration"
+          label="Duration (in months)"
+          rules={[{ required: true, message: "Please enter the duration of the course!" }]}
+        >
+          <InputNumber
+            style={{width: "100%"}}
+            placeholder="Enter duration"
+            maxLength={2}
             allowClear
             autoComplete="off"
           />

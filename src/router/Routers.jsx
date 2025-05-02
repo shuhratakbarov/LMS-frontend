@@ -1,10 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import CourseList from "../components/admin/courses/CourseList";
-import ReadGroup from "../components/admin/groups/GroupList";
-import StudentList from "../components/admin/students/StudentList";
-import ReadTeacher from "../components/admin/teachers/TeacherList";
-import GroupList from "../components/teacher/groups/TeacherGroupList";
-import NotFound from "../pages/not-found/NotFound";
+import GroupList from "../components/admin/groups/GroupList";
+import UserList from "../components/admin/users/UserList";
 import StudentGroupList from "../components/student/groups/StudentGroupList";
 import AdminDashboard from "../components/admin/dashboard/AdminDashboard";
 import UserLayout from "../pages/layout/UserLayout";
@@ -25,6 +22,11 @@ import ActionsInGroup from "../components/admin/groups/ActionsInGroup";
 import TeacherTaskList from "../components/teacher/groups/task-list/TeacherTaskList";
 import HomeworkList from "../components/teacher/groups/task-list/homework-list/TeacherHomeworkList";
 import StudentHomeworkList from "../components/student/groups/task-list/StudentHomeworkList";
+import RoomList from "../components/admin/rooms/RoomList";
+import TeacherGroupList from "../components/teacher/groups/TeacherGroupList";
+import LessonScheduleList from "../components/admin/lesson-schedule/LessonScheduleList";
+import TimetableView from "../components/admin/lesson-schedule/time-table-view/TimetableView";
+import NotFound from "../pages/not-found/NotFound";
 
 const Routers = ({ user }) => {
   return (
@@ -35,12 +37,13 @@ const Routers = ({ user }) => {
           <>
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
-            <Route path="/profile" element={<AdminDashboard />} />
             <Route path="/courses" element={<CourseList />} />
-            <Route path="/groups" element={<ReadGroup />} />
+            <Route path="/groups" element={<GroupList />} />
             <Route path="/groups/:groupId" element={<ActionsInGroup />} />
-            <Route path="/students" element={<StudentList />} />
-            <Route path="/teachers" element={<ReadTeacher />} />
+            <Route path="/lesson-schedules" element={<LessonScheduleList />} />
+            <Route path="/lesson-schedules/time-table" element={<TimetableView />} />
+            <Route path="/users" element={<UserList />} />
+            <Route path="/rooms" element={<RoomList />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/settings" element={<Settings />} />
           </>
@@ -50,7 +53,7 @@ const Routers = ({ user }) => {
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="/dashboard" element={<TeacherDashboard />} />
             <Route path="/profile" element={<TeacherDashboard />} />
-            <Route path="/my-groups" element={<GroupList />} />
+            <Route path="/my-groups" element={<TeacherGroupList />} />
             <Route path="/my-groups/:groupId/tasks" element={<TeacherTaskList />} />
             <Route path="/my-groups/:groupId/tasks/:taskId/homework" element={<HomeworkList />} />
             <Route path="/messages" element={<TeacherMessages />} />

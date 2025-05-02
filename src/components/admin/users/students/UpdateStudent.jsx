@@ -1,12 +1,23 @@
-import { useState, useCallback } from "react";
-import { Modal, Form, Input, Button, message, Select, DatePicker } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { addUser, getGroupIdAndName } from "../../../services/api-client";
+import { useState, useCallback, useEffect } from "react";
+import { Modal, Form, Input, Button, message, Select } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { editUser, getGroupIdAndName } from "../../../../services/api-client";
 
-const AddStudentModal = ({ isOpen, onSuccess, hideModal }) => {
+const UpdateStudentModal = ({ isOpen, onSuccess, onClose, student }) => {
+  const [form] = Form.useForm();
   const [options, setOptions] = useState([]);
   const [fetchingGroups, setFetchingGroups] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && student) {
+      form.setFieldsValue({
+        ...student,
+        password: "",
+        groups: student.groups ? student.groups.map((group) => group.id) : [],
+      });
+    }
+  }, [isOpen, student, form]);
 
   const fetchGroups = useCallback(async () => {
     if (options.length > 0) return;
@@ -32,41 +43,43 @@ const AddStudentModal = ({ isOpen, onSuccess, hideModal }) => {
 
   const onFinish = async (values) => {
     setSubmitting(true);
+    const studentId = student.id;
     try {
       const student = {
         ...values,
+        id: studentId,
         roleId: 3,
-        birthDate: values.birthDate ? values.birthDate.format("YYYY-MM-DD") : null,
       };
-      const response = await addUser(student);
+      const response = await editUser(student);
       const { success, message: responseMessage } = response.data;
       if (success) {
-        message.success("Student successfully added");
+        message.success("Student updated successfully");
         onSuccess();
       } else {
-        message.error(responseMessage || "Failed to add student");
+        message.error(responseMessage || "Failed to update student");
       }
     } catch (error) {
-      message.error(error.message || "An error occurred while adding the student");
+      message.error(error.message || "An error occurred while updating the student");
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    message.info("Adding student canceled");
-    hideModal();
+    message.info("Editing canceled");
+    onClose();
   };
 
   return (
     <Modal
-      title="Add New Student"
+      title="Update Student"
       open={isOpen}
       onCancel={handleCancel}
       footer={null}
-      destroyOnClose={true}
+      destroyOnClose
     >
       <Form
+        form={form}
         onFinish={onFinish}
         size="large"
         layout="vertical"
@@ -129,18 +142,6 @@ const AddStudentModal = ({ isOpen, onSuccess, hideModal }) => {
           <Input placeholder="Enter address" allowClear />
         </Form.Item>
         <Form.Item
-          label="Birth Date"
-          name="birthDate"
-          rules={[{ required: true, message: "Please select birth date!" }]}
-        >
-          <DatePicker
-            style={{ width: "100%" }}
-            placeholder="Select birth date"
-            format="YYYY-MM-DD"
-            disabledDate={(current) => current && current > new Date()}
-          />
-        </Form.Item>
-        <Form.Item
           label="Username"
           name="username"
           rules={[
@@ -156,13 +157,13 @@ const AddStudentModal = ({ isOpen, onSuccess, hideModal }) => {
           label="Password"
           name="password"
           rules={[
-            { required: true, message: "Please enter a password!" },
-            { min: 5, message: "Password must be at least 8 characters!" },
+            { required: false },
+            { min: 8, message: "Password must be at least 8 characters!" },
             { max: 32, message: "Password cannot exceed 32 characters!" },
-            { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{5,}$/, message: "Password must contain at least one letter and one number!" },
+            { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, message: "Password must contain at least one letter and one number!" },
           ]}
         >
-          <Input.Password placeholder="Enter a password" allowClear />
+          <Input.Password placeholder="Leave empty to keep unchanged" allowClear />
         </Form.Item>
         <Form.Item label="Groups" name="groups">
           <Select
@@ -178,11 +179,11 @@ const AddStudentModal = ({ isOpen, onSuccess, hideModal }) => {
           <Button
             type="primary"
             htmlType="submit"
-            icon={<PlusOutlined />}
+            icon={<EditOutlined />}
             loading={submitting}
             disabled={submitting}
           >
-            Add Student
+            Update Student
           </Button>
         </Form.Item>
       </Form>
@@ -190,4 +191,4 @@ const AddStudentModal = ({ isOpen, onSuccess, hideModal }) => {
   );
 };
 
-export default AddStudentModal;
+export default UpdateStudentModal;

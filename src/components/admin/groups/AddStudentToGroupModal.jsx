@@ -83,8 +83,8 @@ const AddStudentToGroupModal = ({ isOpen, onSuccess, onClose, groupId }) => {
             disabled={searching}
           />
         </Form.Item>
-        <Form.Item label="Selected Student" name="studentId">
-          <p>{student ? `${student.firstName} ${student.lastName}` : "No student selected"}</p>
+        <Form.Item label="Selected Student:" name="studentId">
+          <p><b>{student ? `${student.firstName} ${student.lastName}` : "No student selected"}</b></p>
         </Form.Item>
         <Form.Item>
           <Button

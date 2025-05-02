@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Modal, Button, message, Typography } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
-import { deleteUser } from "../../../services/api-client";
+import { deleteUser } from "../../../../services/api-client";
 
 const { Text } = Typography;
 

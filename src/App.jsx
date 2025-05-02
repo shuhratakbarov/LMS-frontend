@@ -14,7 +14,7 @@ const App = () => {
   };
   useEffect(() => {
     checkAuth();
-  }, []); // Run once on mount
+  }, []);
 
   return isAuthenticated && user ? <Routers user={user} /> : <Login checkAuth={checkAuth} />;
 };

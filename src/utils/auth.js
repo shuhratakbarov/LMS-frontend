@@ -1,5 +1,6 @@
 import { AUTH_DATA } from "./local-storage-keys";
-import { refreshToken } from "../services/api-client";
+import { logout, refreshToken } from "../services/api-client";
+import { message } from "antd";
 
 export const getAccessToken = () => {
   const authData = localStorage.getItem(AUTH_DATA);
@@ -59,4 +60,31 @@ export const canUserLogin = async () => {
   }
   deleteAuthData();
   return false;
+};
+
+export const handleLogout = async (navigate) => {
+  try {
+    const token = getAccessToken();
+    if (!token) {
+      deleteAuthData();
+      navigate("/login");
+      message.info("Session already expired");
+      return;
+    }
+    const response = await logout(token); // Await the logout call
+    if (response.data.success) {
+      deleteAuthData();
+      navigate("/login");
+      message.success("Logged out successfully");
+      window.location.reload();
+    } else {
+      deleteAuthData();
+      navigate("/login");
+      message.error(response.data.message || "Logout failed");
+    }
+  } catch (error) {
+    deleteAuthData();
+    navigate("/login");
+    message.error("Logout failed: " + error.message);
+  }
 };

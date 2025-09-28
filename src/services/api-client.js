@@ -1,12 +1,19 @@
 import axios from "axios";
 import { ENDPOINTS } from "../server/endpoints";
-import { getAccessToken, getRefreshToken, isAccessTokenExpired, setAuthData, deleteAuthData } from "../utils/auth";
+import {
+  getAccessToken,
+  getRefreshToken,
+  isAccessTokenExpired,
+  setAuthData,
+  deleteAuthData
+} from "../utils/auth";
 
 const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-  timeout: 5000,
+  baseURL: process.env.REACT_APP_URL,
+  timeout: 10000,
   headers: {
-    Accept: "application/json, text/plain, */*",
+    Accept: "*/*",
+    'Cache-Control': 'no-cache',
   },
 });
 
@@ -55,11 +62,15 @@ export const login = (credentials) => apiClient.post(ENDPOINTS.LOGIN, credential
 export const logout = () => apiClient.delete(ENDPOINTS.LOGOUT);
 export const refreshToken = () => {
   return axios.post(
-    process.env.REACT_APP_API_URL + ENDPOINTS.REFRESH,
-    { refreshToken: getRefreshToken() },
-    { headers: { "Content-Type": "application/json" } } // can be removed
+    process.env.REACT_APP_URL + ENDPOINTS.REFRESH,
+    { refreshToken: getRefreshToken() }
   );
 };
+//-------------------------------- Password --------------------------------------------
+export const passwordResetRequest = (email) => apiClient.post(ENDPOINTS.PASSWORD_RESET_REQUEST, email);
+export const passwordResetConfirm = (values) => apiClient.post(ENDPOINTS.PASSWORD_RESET_CONFIRM, values);
+export const changePassword = (values) => apiClient.post(ENDPOINTS.CHANGE_PASSWORD, values);
+
 //-------------------------------- Admin ---------------------------------------------------
 export const getAdminDashboardStats = () => apiClient.get(ENDPOINTS.ADMIN_DASHBOARD);
 export const getCourseList = (searchText, page, size) => apiClient.get(ENDPOINTS.ADMIN_COURSE + "?keyword=" + searchText + "&page=" + page + "&size=" + size);
@@ -77,25 +88,30 @@ export const getGroupData = (groupId, page, size) => apiClient.get(ENDPOINTS.ADM
 export const searchStudent = (searchText) => apiClient.get(ENDPOINTS.ADMIN_GROUP + `/search-student?username=${searchText}`);
 export const addStudentToGroup = (studentId, groupId) => apiClient.post(ENDPOINTS.ADMIN_GROUP + `/add-student?student-id=${studentId}&group-id=${groupId}`);
 export const removeStudentFromGroup = (studentId, groupId) => apiClient.delete(ENDPOINTS.ADMIN_GROUP + `/remove-student/${studentId}?group-id=${groupId}`);
-export const getLessonSchedule = (searchText, page, size) => apiClient.get(ENDPOINTS.ADMIN_LESSON_SCHEDULE + `?keyword=${searchText}&page=${page}&size=${size}`);
-export const checkScheduleConflict = (scheduleId, schedule) => apiClient.post(ENDPOINTS.ADMIN_LESSON_SCHEDULE + "/check-conflict?lesson-schedule-id=" + scheduleId, schedule);
-export const createLessonSchedule = (schedule) => apiClient.post(ENDPOINTS.ADMIN_LESSON_SCHEDULE, schedule);
-export const updateLessonSchedule = (scheduleId, schedule) => apiClient.put(ENDPOINTS.ADMIN_LESSON_SCHEDULE + `/${scheduleId}`, schedule);
-export const deleteLessonSchedule = (scheduleId) => apiClient.delete(ENDPOINTS.ADMIN_LESSON_SCHEDULE + `/${scheduleId}`);
-export const getStudentList = (searchText, page, size) => apiClient.get(ENDPOINTS.ADMIN_USER + `?role=student&searching=${searchText}&page=${page}&size=${size}`)
+export const getLessonSchedule = (searchText, page, size) => apiClient.get(ENDPOINTS.ADMIN_LESSON + `?keyword=${searchText}&page=${page}&size=${size}`);
+export const checkScheduleConflict = (scheduleId, schedule) => apiClient.post(ENDPOINTS.ADMIN_LESSON + "/check-conflict?lesson-schedule-id=" + scheduleId, schedule);
+export const createLessonSchedule = (schedule) => apiClient.post(ENDPOINTS.ADMIN_LESSON, schedule);
+export const updateLessonSchedule = (scheduleId, schedule) => apiClient.put(ENDPOINTS.ADMIN_LESSON + `/${scheduleId}`, schedule);
+export const deleteLessonSchedule = (scheduleId) => apiClient.delete(ENDPOINTS.ADMIN_LESSON + `/${scheduleId}`);
+export const getStudentList = (searchText, page, size) => apiClient.get(ENDPOINTS.ADMIN_USER + `?role=STUDENT&searching=${searchText}&page=${page}&size=${size}`)
 export const getGroupsOfStudent = (studentId) => apiClient.get(ENDPOINTS.ADMIN_GROUP + `/groups-of-student/${studentId}`);
-export const getTeacherList = (searchText, page, size) => apiClient.get(ENDPOINTS.ADMIN_USER+`?role=teacher&searching=${searchText}&page=${page}&size=${size}`)
+export const getTeacherList = (searchText, page, size) => apiClient.get(ENDPOINTS.ADMIN_USER+`?role=TEACHER&searching=${searchText}&page=${page}&size=${size}`)
 export const getGroupsOfTeacher = (teacherId) => apiClient.get(ENDPOINTS.ADMIN_GROUP + `/groups-of-teacher/${teacherId}`)
 export const getGroupIdAndName = () => apiClient.get(ENDPOINTS.ADMIN_GROUP + "/group-id-and-name")
 export const addUser = (user) => apiClient.post(ENDPOINTS.ADMIN_USER, user);
-export const editUser = (user) => apiClient.put(ENDPOINTS.ADMIN_USER + `/${user.id}`, user);
+export const editUser = (user, userId) => apiClient.put(ENDPOINTS.ADMIN_USER + `/${userId}`, user);
 export const deleteUser = (id) => apiClient.delete(ENDPOINTS.ADMIN_USER + `/${id}`);
+export const getUpdates = () => apiClient.get(ENDPOINTS.ADMIN_UPDATE)
+export const createUpdate = (update) => apiClient.post(ENDPOINTS.ADMIN_UPDATE, update)
+export const updateUpdate = (updateId, update) => apiClient.put(ENDPOINTS.ADMIN_UPDATE + `/${updateId}`, update)
+export const deleteUpdate = (updateId) => apiClient.delete(ENDPOINTS.ADMIN_UPDATE, updateId)
 export const getRoomList = () => apiClient.get(ENDPOINTS.ADMIN_ROOM);
 export const createRoom = (roomData) => apiClient.post(ENDPOINTS.ADMIN_ROOM, roomData);
 export const updateRoom = (roomId, roomData) => apiClient.put(ENDPOINTS.ADMIN_ROOM + `/${roomId}`, roomData);
 export const deleteRoom = (roomId) => apiClient.delete(ENDPOINTS.ADMIN_ROOM + `/${roomId}`);
 //-------------------------------- Teacher ---------------------------------------------------
 export const getTeacherGroups = (searchText, page, size) => apiClient.get(ENDPOINTS.TEACHER_GROUP + `?keyword=${searchText}&page=${page}&size=${size}`)
+export const getTeacherLessons = () => apiClient.get(ENDPOINTS.TEACHER_LESSON);
 export const getTeacherTaskList = (groupId) => apiClient.get(ENDPOINTS.TEACHER_TASK + `?group-id=${groupId}`)
 export const createTeacherTask = (taskData) => apiClient.post(ENDPOINTS.TEACHER_TASK, taskData);
 export const updateTeacherTask = (taskId, taskData) => apiClient.put(ENDPOINTS.TEACHER_TASK + `/${taskId}`, taskData, { headers: { "Content-Type": "multipart/form-data" } });
@@ -103,12 +119,22 @@ export const deleteTeacherTask = (taskId) => apiClient.delete(ENDPOINTS.TEACHER_
 export const getTeacherHomeworkList = (taskId, groupId, page, size) => apiClient.get(ENDPOINTS.TEACHER_HOMEWORK + `?task-id=${taskId}&group-id=${groupId}&page=${page}&size=${size}`);
 export const evaluateHomework = (homeworkId, data) => apiClient.patch(ENDPOINTS.TEACHER_HOMEWORK + `/${homeworkId}`, data);
 //-------------------------------- Student ---------------------------------------------------
+export const getStudentHomeworkNotification = () => apiClient.get(ENDPOINTS.STUDENT_HOMEWORK_NOTIFICATION);
 export const getStudentSubjectList = (searchText, page, size) => apiClient.get(ENDPOINTS.STUDENT_GROUP + `?keyword=${searchText}&page=${page}&size=${size}`);
+export const getStudentLessons = () => apiClient.get(ENDPOINTS.STUDENT_LESSON)
 export const getStudentHomework = (groupId) => apiClient.get(ENDPOINTS.STUDENT_HOMEWORK + `?group-id=${groupId}`);
 export const uploadHomework = (taskId, homework) => apiClient.post(ENDPOINTS.STUDENT_HOMEWORK + `?task-id=${taskId}`, homework);
 export const reUploadHomework = (homeworkId, taskId, homework) => apiClient.patch(ENDPOINTS.STUDENT_HOMEWORK + `/${homeworkId}?task-id=${taskId}`, homework);
 //-------------------------------- Shared ---------------------------------------------------
+export const getUserUpdates = (role) => apiClient.get(role === 'TEACHER' ? ENDPOINTS.TEACHER_DASHBOARD : ENDPOINTS.STUDENT_DASHBOARD)
 export const download = (groupId, fileId) => apiClient.get(ENDPOINTS.DOWNLOAD + `/${groupId}?file-id=${fileId}`,{ responseType: "blob" })
 export const getUserInfo = () => apiClient.get(ENDPOINTS.USERINFO);
-
+//-------------------------------- Messages ---------------------------------------------------
+export const getConversations = () => apiClient.get(ENDPOINTS.CONVERSATION);
+export const getMessages = (conversationId, page) => apiClient.get(ENDPOINTS.CONVERSATION + `/${conversationId}/message?page=` + page + "&size=" + 100 + `&sort=createdAt,desc`);
+export const createConversation = (data) => apiClient.post(ENDPOINTS.CONVERSATION, data)
+export const searchConversations = (query, searchType) => apiClient.get(ENDPOINTS.CONVERSATION + `/search?term=${query}&type=${searchType}`)
+export const joinGroupMessages = (id) => apiClient.post(ENDPOINTS.CONVERSATION + `/conversation/${id}/join`)
+export const getUnreadCount = () => apiClient.get(ENDPOINTS.MESSAGES_UNREAD_COUNT);
+export const markAsRead = (messageId) => apiClient.put(ENDPOINTS.MESSAGES + `/${messageId}/read`);
 export default apiClient;

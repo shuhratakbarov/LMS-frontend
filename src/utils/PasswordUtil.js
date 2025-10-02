@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 export const validatePassword = (pwd) => {
 
   const validationErrors = [];
@@ -84,6 +86,18 @@ export const generateSecurePassword = (length = 12) => {
   const digits = "0123456789";
   const special = "!@#$%^&*()_+-=[]{}|;:,.<>?";
 
+  // Helper: cryptographically secure random int in [0, max)
+  const secureRandomInt = (max) => crypto.randomInt(max);
+
+  // Helper: in-place Fisher–Yates shuffle with a secure PRNG
+  const secureShuffle = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = secureRandomInt(i + 1);
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
   const hasSequence = (password) => {
     const lower = password.toLowerCase();
     return [...numSequences, ...alphaSequences, ...qwertySequences].some(seq =>
@@ -95,18 +109,18 @@ export const generateSecurePassword = (length = 12) => {
     let password = "";
 
     // Ensure at least one of each required type
-    password += upperCase[Math.floor(Math.random() * upperCase.length)];
-    password += digits[Math.floor(Math.random() * digits.length)];
-    password += special[Math.floor(Math.random() * special.length)];
+    password += upperCase[secureRandomInt(upperCase.length)];
+    password += digits[secureRandomInt(digits.length)];
+    password += special[secureRandomInt(special.length)];
 
     // Fill remaining length with random characters
     const allChars = upperCase + lowerCase + digits + special;
     for (let i = password.length; i < length; i++) {
-      password += allChars[Math.floor(Math.random() * allChars.length)];
+      password += allChars[secureRandomInt(allChars.length)];
     }
 
-    // Shuffle the password
-    return password.split("").sort(() => Math.random() - 0.5).join("");
+    // Securely shuffle the password
+    return secureShuffle(password.split("")).join("");
   };
 
   let password;

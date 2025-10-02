@@ -8,11 +8,12 @@ import {
 } from "@ant-design/icons";
 import { login } from "../../services/api-client";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
-const imageLogin = "././login.png";
-const imageTUIT = "./tuit.png";
+const imageLogin = "../images/study.svg";
+const imageTUIT = "../images/tuit.png";
 
-const Login = ({ checkAuth }) => {
+const Login = () => {
   const [loading, setLoading] = useState(false);
   const onFinish = async (values) => {
     try {
@@ -21,11 +22,14 @@ const Login = ({ checkAuth }) => {
         username: values.username,
         password: values.password
       });
+      console.log(response);
       if (response.data.success) {
         setAuthData(response.data.data);
-        await checkAuth();
+        window.location.reload();
+        message.success(response.data.message);
+      } else {
+        message.error(response.data.message)
       }
-      message.success(response.data.message);
     } catch (err) {
       message.error(err.message);
       setLoading(false);
@@ -34,87 +38,111 @@ const Login = ({ checkAuth }) => {
     }
   };
   return (
-    <div
-      style={{
+    <div style={{
+      background: "linear-gradient(135deg, #1e90ff, #4169e1, #0000cd)",
+      display: "flex",
+      width: "100%",
+      height: "100vh",
+      margin: 0,
+      padding: 0,
+      boxSizing: "border-box"
+    }}>
+      <div style={{
+        flex: "1",
         backgroundImage: `url("${imageLogin}")`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
-        width: "100%",
-        height: "80.1vh",
-        margin: "0 auto",
-        paddingTop: "10%"
-      }}
-    >
-      <img
-        src={imageTUIT}
-        alt="Learning Logo"
-        style={{
-          display: "block",
-          margin: "0 auto",
-          width: "20vh",
-          height: "auto",
-          borderRadius: "50%",
-          objectFit: "cover"
-        }}
-      />
-      <h2 style={{ textAlign: "center" }}>Learning Management System</h2>
-      <Card
-        style={{
-          width: 400,
-          margin: "0 auto",
-          boxShadow: "0 4px 8px rgba(0,0,0,0.1)"
-        }}
-      >
-        <Form
-          name="login-form"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          autoComplete="off"
+        backgroundPosition: "center",
+      }} />
+      <div style={{
+        flex: "1",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "2rem",
+
+      }}>
+        <img
+          src={imageTUIT}
+          alt="Learning Logo"
+          style={{
+            width: "20vh",
+            height: "auto",
+            borderRadius: "50%",
+            objectFit: "cover",
+            marginBottom: "1.5rem"
+          }}
+        />
+        <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>Learning Management System</h2>
+        <Card
+          style={{
+            width: "100%",
+            maxWidth: "400px",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.1)"
+          }}
         >
-          <Form.Item
-            label="Username"
-            name="username"
-            rules={[
-              { required: true, message: "Please input your username!" },
-              { type: "string", message: "Please enter a valid username!" }
-            ]}
+          <Form
+            name="login-form"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            autoComplete="off"
           >
-            <Input prefix={<UserOutlined />} placeholder="Username" size="large" />
-          </Form.Item>
-
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Password"
-              size="large"
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              block
-              size="large"
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[
+                { required: true, message: "Please input your username!" },
+                { type: "string", message: "Please enter a valid username!" }
+              ]}
             >
-              {loading ? (
-                <div>
-                  <LoadingOutlined /> 'Logging in...'
-                </div>
-              ) : (
-                <div>
-                  <LoginOutlined /> Log in
-                </div>
-              )}
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
+              <Input prefix={<UserOutlined />} placeholder="Username" size="large" />
+            </Form.Item>
+
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[{ required: true, message: "Please input your password!" }]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder="Password"
+                size="large"
+              />
+            </Form.Item>
+            <Link
+              to="/forgot-password"
+              style={{
+                display: "block",
+                width: "100%",
+                textAlign: "center",
+                marginBottom: 20
+              }}
+            >
+              Forgot password?
+            </Link>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                block
+                size="large"
+              >
+                {loading ? (
+                  <p>
+                    <LoadingOutlined />
+                  </p>
+                ) : (
+                  <div>
+                    <LoginOutlined /> Log in
+                  </div>
+                )}
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -1,41 +1,32 @@
-import crypto from 'crypto';
-
 export const validatePassword = (pwd) => {
-
   const validationErrors = [];
   let score = 0;
   if (pwd.length < 8) {
-
     validationErrors.push(errorMessages.wordLength);
   } else {
     score += 10;
   }
   if (pwd.includes("@") && pwd.includes(".")) {
-
     validationErrors.push(errorMessages.wordNotEmail);
   } else {
     score += 10;
   }
   if (!/[a-z]/.test(pwd)) {
-
     validationErrors.push(errorMessages.wordLowercase);
   } else {
     score += 15;
   }
   if (!/[A-Z]/.test(pwd)) {
-
     validationErrors.push(errorMessages.wordUppercase);
   } else {
     score += 15;
   }
   if (!/\d/.test(pwd)) {
-
     validationErrors.push(errorMessages.wordOneNumber);
   } else {
     score += 15;
   }
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\?]/.test(pwd)) {
-
     validationErrors.push(errorMessages.wordOneSpecialChar);
   } else {
     score += 15;
@@ -53,7 +44,6 @@ export const validatePassword = (pwd) => {
   if (pwd.length > 12) score += 10;
   if (pwd.length > 16) score += 10;
   return { score: Math.max(0, Math.min(100, score)), errors: validationErrors };
-
 };
 
 export const getVerdict = (score) => {
@@ -86,10 +76,13 @@ export const generateSecurePassword = (length = 12) => {
   const digits = "0123456789";
   const special = "!@#$%^&*()_+-=[]{}|;:,.<>?";
 
-  // Helper: cryptographically secure random int in [0, max)
-  const secureRandomInt = (max) => crypto.randomInt(max);
+  // Use browser's crypto API
+  const secureRandomInt = (max) => {
+    const randomValues = new Uint32Array(1);
+    window.crypto.getRandomValues(randomValues);
+    return randomValues[0] % max;
+  };
 
-  // Helper: in-place Fisher–Yates shuffle with a secure PRNG
   const secureShuffle = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = secureRandomInt(i + 1);
@@ -107,19 +100,15 @@ export const generateSecurePassword = (length = 12) => {
 
   const generatePassword = () => {
     let password = "";
-
-    // Ensure at least one of each required type
     password += upperCase[secureRandomInt(upperCase.length)];
     password += digits[secureRandomInt(digits.length)];
     password += special[secureRandomInt(special.length)];
 
-    // Fill remaining length with random characters
     const allChars = upperCase + lowerCase + digits + special;
     for (let i = password.length; i < length; i++) {
       password += allChars[secureRandomInt(allChars.length)];
     }
 
-    // Securely shuffle the password
     return secureShuffle(password.split("")).join("");
   };
 

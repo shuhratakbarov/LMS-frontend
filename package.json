@@ -1,6 +1,6 @@
 {
   "name": "lms-client",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
@@ -23,8 +23,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -47,7 +47,11 @@
     ]
   },
   "devDependencies": {
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
     "eslint": "^8.57.1",
-    "eslint-plugin-react": "^7.37.4"
+    "eslint-plugin-react": "^7.37.4",
+    "react-app-rewired": "^2.2.1",
+    "stream-browserify": "^3.0.0"
   }
 }

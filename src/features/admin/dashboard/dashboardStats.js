@@ -1,7 +1,7 @@
 import { Card, Col, Statistic } from "antd";
 import {
+  BookOutlined,
   GroupOutlined,
-  SolutionOutlined,
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -9,7 +9,7 @@ import {
 const DASHBOARD_ELEMENTS = {
   Courses: {
     title: "Courses",
-    prefix: <SolutionOutlined />,
+    prefix: <BookOutlined />,
     suffix: "",
     color: "#111111",
   },

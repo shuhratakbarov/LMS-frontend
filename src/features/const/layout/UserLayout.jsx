@@ -6,9 +6,7 @@ import {
   MenuUnfoldOutlined,
   MoreOutlined,
   SettingOutlined,
-  BellOutlined,
   VideoCameraOutlined,
-  QuestionOutlined,
   CustomerServiceOutlined,
   AlertOutlined,
   ExportOutlined,
@@ -20,7 +18,7 @@ import { getMenuItems } from "./MenuItems";
 import { handleLogout } from "../../../utils/auth";
 import { RoleIcon } from "../../../utils/util";
 import Clock from "../Clock";
-import { getStudentHomeworkNotification, getUserInfo } from "../../../services/api-client";
+import { getStudentHomeworkNotification } from "../../../services/api-client";
 import HomeworkNotificationDropdown from "./NotificationDropdown";
 
 const { Header, Sider, Content } = Layout;
@@ -43,13 +41,14 @@ const UserLayout = ({ user, isConnected }) => {
   }, [location.pathname, menuItems, selectedMenuKey]);
 
   useEffect(() => {
-    fetchHomeworkNotification();
+      if (user?.roleName === "STUDENT") {
+          fetchHomeworkNotification();
+      }
   }, []);
 
   const fetchHomeworkNotification = useCallback(async () => {
     try {
       const response = await getStudentHomeworkNotification();
-      console.log(response);
       const { success, data, message: errorMessage } = response.data;
       if (success) {
         setNotificationCount(data.length);
@@ -258,7 +257,7 @@ const UserLayout = ({ user, isConnected }) => {
           />
           <Space size="small" align="center">
             <Clock />
-            <HomeworkNotificationDropdown notificationCount={notificationCount} homeworkList={homeworkNotifications}/>
+            <HomeworkNotificationDropdown notificationCount={notificationCount} homeworkList={homeworkNotifications} role={user.roleName}/>
             <Button type="text" icon={<VideoCameraOutlined style={{ fontSize: 20 }} />} size="large" />
             <Button type="text" icon={<BarChartOutlined style={{ fontSize: 20 }} />} size="large" />
             <Dropdown menu={{ items: dropdownMenu }} placement="bottomRight">

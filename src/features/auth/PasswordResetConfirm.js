@@ -59,7 +59,6 @@ const PasswordResetConfirm = () => {
     setLoading(true);
     try {
       const response = await passwordResetConfirm(formData);
-      console.log(response);
       if (response.data.success) {
         setSuccess('Password updated successfully! Redirecting to login...');
         setTimeout(() => navigate('/login'), 3000);

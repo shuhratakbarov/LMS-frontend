@@ -37,7 +37,6 @@ const StudentHomeworkList = () => {
     setLoading(true);
     try {
       const response = await getStudentHomework(groupId);
-      console.log(response);
       const { success, data, message: errorMessage } = response.data;
 
       if (success) {

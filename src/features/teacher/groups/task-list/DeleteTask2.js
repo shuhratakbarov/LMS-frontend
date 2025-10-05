@@ -16,8 +16,6 @@ const DeleteTask = ({ isOpen, onSuccess, onClose, record }) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      console.log('Deleting task:', record?.id);
-
       // Simulate success
       onSuccess();
       onClose();

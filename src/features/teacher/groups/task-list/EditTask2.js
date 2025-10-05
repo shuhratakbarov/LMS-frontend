@@ -40,13 +40,6 @@ const EditTask = ({ isOpen, onSuccess, onClose, record }) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      console.log('Updating task with values:', {
-        ...values,
-        id: record?.id,
-        deadline: values.deadline?.format("YYYY-MM-DD"),
-        file: uploadedFile
-      });
-
       // Simulate success
       onSuccess();
       onClose();

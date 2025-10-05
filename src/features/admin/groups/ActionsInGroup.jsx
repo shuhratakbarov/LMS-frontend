@@ -22,7 +22,6 @@ const ActionsInGroup = () => {
     setLoading(true);
     try {
       const response = await getGroupData(groupId, page, size);
-      console.log(response);
       const { success, data, message: errorMessage } = response.data;
       if (success) {
         setGroupData({

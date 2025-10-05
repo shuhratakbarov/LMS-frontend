@@ -35,7 +35,6 @@ const UserProfile = ({user}) => {
     setLoading(true);
     try {
       const response = await getUserInfo();
-      console.log(response);
       const { success, data, message: errorMessage } = response.data;
       if (success) {
         setFormData(data);

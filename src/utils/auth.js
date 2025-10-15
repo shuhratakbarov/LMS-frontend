@@ -41,14 +41,14 @@ export const getUserCredentials = () => {
   return JSON.parse(authData).user;
 };
 
-export const canUserLogin = async () => {
+export const canUserLogin = () => {
   if (!isAccessTokenExpired()) {
     return true;
   }
   const token = getAccessToken();
   if (token && isAccessTokenExpired() && getRefreshToken()) {
     try {
-      const refreshResponse = await refreshToken();
+      const refreshResponse = refreshToken();
       if (refreshResponse?.data?.success) {
         setAuthData(refreshResponse.data.data);
         return true;

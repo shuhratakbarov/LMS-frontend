@@ -10,11 +10,11 @@ import {
 } from '@ant-design/icons';
 import { getUserUpdates } from "../../services/api-client";
 import { getGreeting } from "../../utils/util";
-import { QuickStats, RecentActivity, UpdateCard } from "./DashboardUtils";
+import { QuickStats, RecentActivity, UpdateCard } from "./UserDashboardUtils";
 
 const { Title, Text } = Typography;
 
-const Dashboard = ({user}) => {
+const UserDashboard = ({user}) => {
   const [updates, setUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -224,4 +224,4 @@ const Dashboard = ({user}) => {
   );
 };
 
-export default Dashboard;
+export default UserDashboard;

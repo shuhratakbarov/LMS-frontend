@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { Card, Avatar, Row, Col, Input, Button, DatePicker, Select, Switch, Divider, Badge,
+import {
+  Card, Avatar, Row, Col, Input, Button, DatePicker, Switch,
   Statistic, Progress, Tag, Space, Typography, Tabs, Timeline, Alert, message
 } from 'antd';
-import { UserOutlined, EditOutlined, SaveOutlined, CloseOutlined, CameraOutlined,
+import {
+  UserOutlined, EditOutlined, SaveOutlined, CloseOutlined, CameraOutlined,
   BookOutlined, TeamOutlined, TrophyOutlined, CalendarOutlined, MailOutlined,
   PhoneOutlined, SafetyOutlined, HistoryOutlined
 } from '@ant-design/icons';
@@ -21,16 +23,29 @@ const mockActivities = [
 
 const { Title, Text, Paragraph } = Typography;
 
-const UserProfile = ({user}) => {
+const UserProfile = ({ user }) => {
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('1');
   const [formData, setFormData] = useState({});
   const [formDataToUpdate, setFormDataToUpdate] = useState({});
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      setIsTablet(width >= 768 && width < 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetchData();
   }, []);
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -39,10 +54,10 @@ const UserProfile = ({user}) => {
       if (success) {
         setFormData(data);
       } else {
-        message.error(errorMessage || "Failed to fetch students");
+        message.error(errorMessage || "Failed to fetch user info");
       }
     } catch (err) {
-      message.error(err.message || "An error occurred while fetching students");
+      message.error(err.message || "An error occurred while fetching user info");
     } finally {
       setLoading(false);
     }
@@ -50,22 +65,7 @@ const UserProfile = ({user}) => {
 
   const handleSave = async (values) => {
     message.success("Profile updated successfully");
-    // setLoading(true);
-    // try {
-    //   const response = await editUser(values, user.id);
-    //   const { success, data, message: responseMessage } = response.data;
-    //   if (success) {
-    //     setFormData(data.content)
-    //     setFormDataToUpdate(data.content)
-    //     message.success("Student updated successfully");
-    //   } else {
-    //     message.error(responseMessage || "Failed to update student");
-    //   }
-    // } catch (error) {
-    //   message.error(error.message || "An error occurred while updating the student");
-    // } finally {
-    //   setLoading(false);
-    // }
+    setEditMode(false);
   };
 
   const handleCancel = () => {
@@ -84,10 +84,6 @@ const UserProfile = ({user}) => {
     });
     setEditMode(false);
   };
-
-  // const handleInputChange = (field, value) => {
-  //   setFormDataToUpdate(prev => ({ ...prev, [field]: value }));
-  // };
 
   const getRoleColor = (role) => {
     const colors = {
@@ -109,311 +105,418 @@ const UserProfile = ({user}) => {
   };
 
   return (
-    <div style={{ padding: '0', background: 'transparent' }}>
-      {/* Header Section */}
-      <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
-        <Col span={24}>
-          <Card
-            style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              border: 'none',
-              borderRadius: 16
-            }}
-            bodyStyle={{ padding: '32px' }}
-          >
-            <Row align="middle" gutter={24}>
-              <Col>
-                <div style={{ position: 'relative' }}>
-                  <Avatar
-                    size={120}
-                    icon={<RoleIcon role={formData.roleName} />}
-                    style={{
-                      backgroundColor: '#949494',
-                      border: '4px solid rgba(255, 255, 255, 0.3)',
-                      fontSize: 72
-                    }}
-                  />
-                  <Button
-                    type="primary"
-                    shape="circle"
-                    icon={<CameraOutlined />}
-                    size="small"
-                    style={{
-                      position: 'absolute',
-                      bottom: 8,
-                      right: 8,
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      color: '#667eea',
-                      border: 'none'
-                    }}
-                    onClick={() => message.info('Photo upload functionality will be available in the next version')}
-                  />
-                </div>
-              </Col>
-              <Col flex={1}>
-                <Title level={2} style={{ color: 'white', margin: 0 }}>
-                  {formData.firstName} {formData.lastName}
-                </Title>
-                <Space style={{ marginTop: 8 }}>
-                  <Tag color={getRoleColor(formData.roleName)} style={{ fontSize: 14, padding: '4px 12px' }}>
-                    {formData.roleName}
-                  </Tag>
-                </Space>
-                <Paragraph style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '12px 0 0', fontSize: 16 }}>
-                  <MailOutlined style={{ marginRight: 8 }} />
-                  {formData.email}
-                </Paragraph>
-                <Paragraph style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '8px 0 0', fontSize: 14 }}>
-                  Previous login: {formatLastSeen(formData.lastSeen).substring(9)}
-                </Paragraph>
-              </Col>
-              <Col>
-                <Button
-                  type={editMode ? 'default' : 'primary'}
-                  icon={editMode ? <CloseOutlined /> : <EditOutlined />}
-                  size="large"
-                  onClick={editMode ? handleCancel : () => setEditMode(true)}
-                  style={{
-                    backgroundColor: editMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.9)',
-                    borderColor: 'transparent',
-                    color: editMode ? 'white' : '#667eea'
-                  }}
-                >
-                  {editMode ? 'Cancel' : 'Edit Profile'}
-                </Button>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Main Content Tabs */}
-      <Tabs activeKey={activeTab} onChange={setActiveTab} size="large">
-        <Tabs.TabPane tab="Personal Information" key="1">
-          <Row gutter={[24, 24]}>
-            <Col xs={24} lg={16}>
-              <Card
-                title="Basic Information"
-                extra={editMode && (
-                  <Button
-                    type="primary"
-                    icon={<SaveOutlined />}
-                    loading={loading}
-                    onClick={handleSave}
-                  >
-                    Save Changes
-                  </Button>
-                )}
-                style={{ borderRadius: 12 }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <div>
-                        <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>First Name</label>
-                        <Input
-                          prefix={<UserOutlined />}
-                          disabled={!editMode}
-                          size="large"
-                          value={formData.firstName}
-                          // onChange={(e) => handleInputChange('firstName', e.target.value)}
+      <div style={{ padding: 0, background: 'transparent' }}>
+        {/* Header Section */}
+        <Row gutter={[isMobile ? 16 : 24, isMobile ? 16 : 24]} style={{ marginBottom: isMobile ? 16 : 24 }}>
+          <Col span={24}>
+            <Card
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  border: 'none',
+                  borderRadius: isMobile ? 12 : 16
+                }}
+                bodyStyle={{ padding: isMobile ? '20px' : '32px' }}
+            >
+              {isMobile ? (
+                  // Mobile Layout - Centered vertical stack
+                  <Row align="middle" gutter={[0, 16]}>
+                    <Col span={24} style={{ textAlign: 'center' }}>
+                      <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <Avatar
+                            size={80}
+                            icon={<RoleIcon role={formData.roleName} />}
+                            style={{
+                              backgroundColor: '#949494',
+                              border: '4px solid rgba(255, 255, 255, 0.3)',
+                              fontSize: 48
+                            }}
+                        />
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<CameraOutlined />}
+                            size="small"
+                            style={{
+                              position: 'absolute',
+                              bottom: 4,
+                              right: 4,
+                              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                              color: '#667eea',
+                              border: 'none'
+                            }}
+                            onClick={() => message.info('Photo upload functionality will be available soon')}
                         />
                       </div>
                     </Col>
-                    <Col span={12}>
-                      <div>
-                        <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Last Name</label>
-                        <Input
-                          prefix={<UserOutlined />}
-                          disabled={!editMode}
-                          size="large"
-                          value={formData.lastName}
-                          // onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        />
+                    <Col span={24}>
+                      <div style={{ textAlign: 'center' }}>
+                        <Title level={3} style={{ color: 'white', margin: 0, fontSize: '20px' }}>
+                          {formData.firstName} {formData.lastName}
+                        </Title>
+                        <Space style={{ marginTop: 8 }}>
+                          <Tag color={getRoleColor(formData.roleName)} style={{ fontSize: 12, padding: '2px 8px' }}>
+                            {formData.roleName}
+                          </Tag>
+                        </Space>
+                        <Paragraph style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '12px 0 0', fontSize: 14, marginBottom: 0 }}>
+                          <MailOutlined style={{ marginRight: 8 }} />
+                          {formData.email}
+                        </Paragraph>
+                        {formData.lastSeen && (
+                            <Paragraph style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '8px 0 0', fontSize: 12, marginBottom: 0 }}>
+                              Previous login: {formatLastSeen(formData.lastSeen).substring(9)}
+                            </Paragraph>
+                        )}
                       </div>
+                    </Col>
+                    <Col span={24}>
+                      <Button
+                          type={editMode ? 'default' : 'primary'}
+                          icon={editMode ? <CloseOutlined /> : <EditOutlined />}
+                          size="middle"
+                          onClick={editMode ? handleCancel : () => setEditMode(true)}
+                          block
+                          style={{
+                            backgroundColor: editMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.9)',
+                            borderColor: 'transparent',
+                            color: editMode ? 'white' : '#667eea'
+                          }}
+                      >
+                        {editMode ? 'Cancel' : 'Edit Profile'}
+                      </Button>
                     </Col>
                   </Row>
-
-                  <div>
-                    <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Email</label>
-                    <Input
-                      prefix={<MailOutlined />}
-                      disabled={!editMode}
-                      size="large"
-                      value={formData.email}
-                      // onChange={(e) => handleInputChange('email', e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Username</label>
-                    <Input
-                      prefix={<UserOutlined />}
-                      disabled={true}
-                      size="large"
-                      value={formData.username}
-                      addonAfter={<SafetyOutlined />}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Phone</label>
-                    <Input
-                      prefix={<PhoneOutlined />}
-                      disabled={!editMode}
-                      size="large"
-                      value={formData.phone}
-                      // onChange={(e) => handleInputChange('phone', e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Address</label>
-                    <Input.TextArea
-                      disabled={!editMode}
-                      rows={2}
-                      size="large"
-                      value={formData.address}
-                      // onChange={(e) => handleInputChange('address', e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>Birth Date</label>
-                    <DatePicker
-                      disabled={!editMode}
-                      style={{ width: '100%' }}
-                      size="large"
-                      value={formData.birthDate ? dayjs(formData.birthDate) : null}
-                      // onChange={(date, dateString) => handleInputChange('birthDate', dateString)}
-                    />
-                  </div>
-                </div>
-              </Card>
-            </Col>
-
-            <Col xs={24} lg={8}>
-              <Row gutter={[0, 24]}>
-                {/*<Col span={24}>*/}
-                {/*  <Card title="Account Status" style={{ borderRadius: 12 }}>*/}
-                {/*    <Space direction="vertical" style={{ width: '100%' }}>*/}
-                {/*      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>*/}
-                {/*        <Text>Account Active</Text>*/}
-                {/*        <Badge status={mockUser.active ? "success" : "error"} />*/}
-                {/*      </div>*/}
-                {/*      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>*/}
-                {/*        <Text>Account Locked</Text>*/}
-                {/*        <Badge status={mockUser.accountNonLocked ? "success" : "error"} />*/}
-                {/*      </div>*/}
-                {/*      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>*/}
-                {/*        <Text>Credentials Valid</Text>*/}
-                {/*        <Badge status={mockUser.credentialsNonExpired ? "success" : "error"} />*/}
-                {/*      </div>*/}
-                {/*      <Divider style={{ margin: '12px 0' }} />*/}
-                {/*      <Text type="secondary" style={{ fontSize: 12 }}>*/}
-                {/*        Member since: {mockUser.createdAt}*/}
-                {/*      </Text>*/}
-                {/*    </Space>*/}
-                {/*  </Card>*/}
-                {/*</Col>*/}
-
-                <Col span={24}>
-                  <Card title="Quick Stats" style={{ borderRadius: 12 }}>
-                    <Row gutter={[16, 16]}>
-                      <Col span={12}>
-                        <Statistic
-                          title="Courses"
-                          value={formData.courseCount}
-                          prefix={<BookOutlined />}
-                          valueStyle={{ color: '#1677ff' }}
+              ) : (
+                  // Desktop Layout - Horizontal
+                  <Row align="middle" gutter={24}>
+                    <Col>
+                      <div style={{ position: 'relative' }}>
+                        <Avatar
+                            size={isTablet ? 100 : 120}
+                            icon={<RoleIcon role={formData.roleName} />}
+                            style={{
+                              backgroundColor: '#949494',
+                              border: '4px solid rgba(255, 255, 255, 0.3)',
+                              fontSize: isTablet ? 60 : 72
+                            }}
                         />
-                      </Col>
-                      <Col span={12}>
-                        <Statistic
-                          title="Groups"
-                          value={formData.groupCount}
-                          prefix={<TeamOutlined />}
-                          valueStyle={{ color: '#52c41a' }}
+                        <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<CameraOutlined />}
+                            size="small"
+                            style={{
+                              position: 'absolute',
+                              bottom: 8,
+                              right: 8,
+                              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                              color: '#667eea',
+                              border: 'none'
+                            }}
+                            onClick={() => message.info('Photo upload functionality will be available soon')}
                         />
-                      </Col>
-                      <Col span={24}>
-                        <div style={{ marginBottom: 8 }}>
-                          <Text strong>Overall Performance</Text>
+                      </div>
+                    </Col>
+                    <Col flex={1}>
+                      <Title level={2} style={{ color: 'white', margin: 0 }}>
+                        {formData.firstName} {formData.lastName}
+                      </Title>
+                      <Space style={{ marginTop: 8 }}>
+                        <Tag color={getRoleColor(formData.roleName)} style={{ fontSize: 14, padding: '4px 12px' }}>
+                          {formData.roleName}
+                        </Tag>
+                      </Space>
+                      <Paragraph style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '12px 0 0', fontSize: 16 }}>
+                        <MailOutlined style={{ marginRight: 8 }} />
+                        {formData.email}
+                      </Paragraph>
+                      {formData.lastSeen && (
+                          <Paragraph style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '8px 0 0', fontSize: 14 }}>
+                            Previous login: {formatLastSeen(formData.lastSeen).substring(9)}
+                          </Paragraph>
+                      )}
+                    </Col>
+                    <Col>
+                      <Button
+                          type={editMode ? 'default' : 'primary'}
+                          icon={editMode ? <CloseOutlined /> : <EditOutlined />}
+                          size="large"
+                          onClick={editMode ? handleCancel : () => setEditMode(true)}
+                          style={{
+                            backgroundColor: editMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.9)',
+                            borderColor: 'transparent',
+                            color: editMode ? 'white' : '#667eea'
+                          }}
+                      >
+                        {editMode ? 'Cancel' : 'Edit Profile'}
+                      </Button>
+                    </Col>
+                  </Row>
+              )}
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Main Content Tabs */}
+        <Tabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            size={isMobile ? "middle" : "large"}
+            tabBarStyle={{ marginBottom: isMobile ? 16 : 24 }}
+        >
+          <Tabs.TabPane tab={isMobile ? "Info" : "Personal Information"} key="1">
+            <Row gutter={[isMobile ? 16 : 24, isMobile ? 16 : 24]}>
+              <Col xs={24} lg={16}>
+                <Card
+                    title="Basic Information"
+                    extra={editMode && !isMobile && (
+                        <Button
+                            type="primary"
+                            icon={<SaveOutlined />}
+                            loading={loading}
+                            onClick={handleSave}
+                        >
+                          Save Changes
+                        </Button>
+                    )}
+                    style={{ borderRadius: isMobile ? 8 : 12 }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '12px' : '16px' }}>
+                    <Row gutter={isMobile ? 8 : 16}>
+                      <Col xs={24} sm={12}>
+                        <div>
+                          <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: isMobile ? 13 : 14 }}>
+                            First Name
+                          </label>
+                          <Input
+                              prefix={<UserOutlined />}
+                              disabled={!editMode}
+                              size={isMobile ? "middle" : "large"}
+                              value={formData.firstName}
+                          />
                         </div>
-                        <Progress
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        <div>
+                          <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: isMobile ? 13 : 14 }}>
+                            Last Name
+                          </label>
+                          <Input
+                              prefix={<UserOutlined />}
+                              disabled={!editMode}
+                              size={isMobile ? "middle" : "large"}
+                              value={formData.lastName}
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: isMobile ? 13 : 14 }}>
+                        Email
+                      </label>
+                      <Input
+                          prefix={<MailOutlined />}
+                          disabled={!editMode}
+                          size={isMobile ? "middle" : "large"}
+                          value={formData.email}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: isMobile ? 13 : 14 }}>
+                        Username
+                      </label>
+                      <Input
+                          prefix={<UserOutlined />}
+                          disabled={true}
+                          size={isMobile ? "middle" : "large"}
+                          value={formData.username}
+                          addonAfter={<SafetyOutlined />}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: isMobile ? 13 : 14 }}>
+                        Phone
+                      </label>
+                      <Input
+                          prefix={<PhoneOutlined />}
+                          disabled={!editMode}
+                          size={isMobile ? "middle" : "large"}
+                          value={formData.phone}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: isMobile ? 13 : 14 }}>
+                        Address
+                      </label>
+                      <Input.TextArea
+                          disabled={!editMode}
+                          rows={isMobile ? 2 : 3}
+                          size={isMobile ? "middle" : "large"}
+                          value={formData.address}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', marginBottom: 8, fontWeight: 500, fontSize: isMobile ? 13 : 14 }}>
+                        Birth Date
+                      </label>
+                      <DatePicker
+                          disabled={!editMode}
+                          style={{ width: '100%' }}
+                          size={isMobile ? "middle" : "large"}
+                          value={formData.birthDate ? dayjs(formData.birthDate) : null}
+                      />
+                    </div>
+
+                    {/* Mobile save button */}
+                    {editMode && isMobile && (
+                        <Button
+                            type="primary"
+                            icon={<SaveOutlined />}
+                            loading={loading}
+                            onClick={handleSave}
+                            size="large"
+                            block
+                        >
+                          Save Changes
+                        </Button>
+                    )}
+                  </div>
+                </Card>
+              </Col>
+
+              <Col xs={24} lg={8}>
+                <Card title="Quick Stats" style={{ borderRadius: isMobile ? 8 : 12 }}>
+                  <Row gutter={[isMobile ? 12 : 16, isMobile ? 12 : 16]}>
+                    <Col xs={12} sm={12}>
+                      <Statistic
+                          title="Courses"
+                          value={formData.courseCount || 0}
+                          prefix={<BookOutlined />}
+                          valueStyle={{ color: '#1677ff', fontSize: isMobile ? 20 : 24 }}
+                      />
+                    </Col>
+                    <Col xs={12} sm={12}>
+                      <Statistic
+                          title="Groups"
+                          value={formData.groupCount || 0}
+                          prefix={<TeamOutlined />}
+                          valueStyle={{ color: '#52c41a', fontSize: isMobile ? 20 : 24 }}
+                      />
+                    </Col>
+                    <Col span={24}>
+                      <div style={{ marginBottom: 8 }}>
+                        <Text strong style={{ fontSize: isMobile ? 13 : 14 }}>Overall Performance</Text>
+                      </div>
+                      <Progress
                           percent={87}
                           strokeColor={{
                             '0%': '#108ee9',
                             '100%': '#87d068',
                           }}
-                        />
-                      </Col>
-                    </Row>
-                  </Card>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Tabs.TabPane>
+                          size={isMobile ? "small" : "default"}
+                      />
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
 
-        <Tabs.TabPane tab="Activity" key="3">
-          <Card title="Recent Activity" style={{ borderRadius: 12 }}>
-            <Timeline
-              items={mockActivities.map((activity, index) => ({
-                dot: getActivityIcon(activity.type),
-                children: (
-                  <div>
-                    <Text strong>{activity.action}</Text>
-                    <br />
-                    <Text type="secondary">{activity.course} • {activity.date}</Text>
-                  </div>
-                )
-              }))}
-            />
-          </Card>
-        </Tabs.TabPane>
+          <Tabs.TabPane tab="Activity" key="3">
+            <Card
+                title="Recent Activity"
+                style={{ borderRadius: isMobile ? 8 : 12 }}
+                bodyStyle={{ padding: isMobile ? 16 : 24 }}
+            >
+              <Timeline
+                  items={mockActivities.map((activity, index) => ({
+                    dot: getActivityIcon(activity.type),
+                    children: (
+                        <div>
+                          <Text strong style={{ fontSize: isMobile ? 13 : 14 }}>{activity.action}</Text>
+                          <br />
+                          <Text type="secondary" style={{ fontSize: isMobile ? 12 : 13 }}>
+                            {activity.course} • {activity.date}
+                          </Text>
+                        </div>
+                    )
+                  }))}
+              />
+            </Card>
+          </Tabs.TabPane>
 
-        <Tabs.TabPane tab="Security" key="4">
-          <Row gutter={[24, 24]}>
-            <Col xs={24} lg={12}>
-              <ChangePassword />
-            </Col>
+          <Tabs.TabPane tab="Security" key="4">
+            <Row gutter={[isMobile ? 16 : 24, isMobile ? 16 : 24]}>
+              <Col xs={24} lg={12}>
+                <ChangePassword isMobile={isMobile} />
+              </Col>
 
-            <Col xs={24} lg={12}>
-              <Card title="Security Settings" style={{ borderRadius: 12 }}>
-                <Space direction="vertical" style={{ width: '100%' }} size="large">
-                  <Alert
-                    message="Account Security"
-                    description="Your account is secure. Last login was recorded successfully."
-                    type="success"
-                    showIcon
-                  />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <Text strong>Two-factor Authentication</Text>
-                      <br />
-                      <Text type="secondary">Add extra security to your account</Text>
+              <Col xs={24} lg={12}>
+                <Card
+                    title="Security Settings"
+                    style={{ borderRadius: isMobile ? 8 : 12 }}
+                    bodyStyle={{ padding: isMobile ? 16 : 24 }}
+                >
+                  <Space direction="vertical" style={{ width: '100%' }} size={isMobile ? "middle" : "large"}>
+                    <Alert
+                        message="Account Security"
+                        description="Your account is secure. Last login was recorded successfully."
+                        type="success"
+                        showIcon
+                        style={{ fontSize: isMobile ? 12 : 14 }}
+                    />
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: isMobile ? 'flex-start' : 'center',
+                      flexDirection: isMobile ? 'column' : 'row',
+                      gap: isMobile ? 8 : 0
+                    }}>
+                      <div style={{ flex: 1 }}>
+                        <Text strong style={{ fontSize: isMobile ? 13 : 14 }}>Two-factor Authentication</Text>
+                        <br />
+                        <Text type="secondary" style={{ fontSize: isMobile ? 12 : 13 }}>
+                          Add extra security to your account
+                        </Text>
+                      </div>
+                      <Switch />
                     </div>
-                    <Switch />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <Text strong>Email Notifications</Text>
-                      <br />
-                      <Text type="secondary">Get notified about account activities</Text>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: isMobile ? 'flex-start' : 'center',
+                      flexDirection: isMobile ? 'column' : 'row',
+                      gap: isMobile ? 8 : 0
+                    }}>
+                      <div style={{ flex: 1 }}>
+                        <Text strong style={{ fontSize: isMobile ? 13 : 14 }}>Email Notifications</Text>
+                        <br />
+                        <Text type="secondary" style={{ fontSize: isMobile ? 12 : 13 }}>
+                          Get notified about account activities
+                        </Text>
+                      </div>
+                      <Switch defaultChecked />
                     </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <Button type="default" icon={<HistoryOutlined />} style={{ width: '100%' }}>
-                    View Login History
-                  </Button>
-                </Space>
-              </Card>
-            </Col>
-          </Row>
-        </Tabs.TabPane>
-      </Tabs>
-    </div>
+                    <Button
+                        type="default"
+                        icon={<HistoryOutlined />}
+                        style={{ width: '100%' }}
+                        size={isMobile ? "middle" : "large"}
+                    >
+                      View Login History
+                    </Button>
+                  </Space>
+                </Card>
+              </Col>
+            </Row>
+          </Tabs.TabPane>
+        </Tabs>
+      </div>
   );
 };
 

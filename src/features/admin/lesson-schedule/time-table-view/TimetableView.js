@@ -149,15 +149,15 @@ const TimetableView = () => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Title level={2} style={{ marginBottom: 0, marginRight: 16 }}>Lesson Schedule</Title>
-          <Tooltip title="Switch to List View">
-            <Switch
-              style={{marginTop : "4vh"}}
-              checkedChildren={<AppstoreOutlined />}
-              unCheckedChildren={<TableOutlined />}
-              onChange={handleViewChange}
-              defaultChecked={true}
-            />
-          </Tooltip>
+          {/*<Tooltip title="Switch to List View">*/}
+          {/*  <Switch*/}
+          {/*    style={{marginTop : "4vh"}}*/}
+          {/*    checkedChildren={<AppstoreOutlined />}*/}
+          {/*    unCheckedChildren={<TableOutlined />}*/}
+          {/*    onChange={handleViewChange}*/}
+          {/*    defaultChecked={true}*/}
+          {/*  />*/}
+          {/*</Tooltip>*/}
         </div>
         <div>
           <Select

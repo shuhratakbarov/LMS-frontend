@@ -1,17 +1,17 @@
 import { Fragment, useState, useEffect, useCallback } from "react";
 import {
-  Avatar, Badge, Button, Card, Col, Dropdown, message, Row, Skeleton, Space,
-  Table, Tag, Tooltip, Typography
+  Avatar, Badge, Button, Card, Col, message, Row, Skeleton, Space,
+  Table, Tag, Tooltip, Typography, Drawer, Descriptions
 } from "antd";
 import {
-  ArrowRightOutlined, BookOutlined, EyeOutlined, FilterOutlined,
-  MoreOutlined, ReloadOutlined, TeamOutlined, UserOutlined
+  ArrowRightOutlined, BookOutlined, EyeOutlined, ReloadOutlined,
+  TeamOutlined, UserOutlined
 } from "@ant-design/icons";
 import { getStudentSubjectList } from "../../../services/api-client";
 import SearchComponent from "../../const/SearchComponent";
 import { useNavigate } from "react-router-dom";
 
-const { Title, Text, Empty } = Typography;
+const { Title, Text } = Typography;
 
 const StudentGroupList = () => {
   const navigate = useNavigate();
@@ -21,8 +21,21 @@ const StudentGroupList = () => {
   const [dataSource, setDataSource] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('table'); // 'table' or 'card'
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isTablet, setIsTablet] = useState(window.innerWidth >= 768 && window.innerWidth < 1024);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      setIsTablet(width >= 768 && width < 1024);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -66,6 +79,17 @@ const StudentGroupList = () => {
     message.success('Data refreshed successfully');
   };
 
+  const handleViewDetails = (record) => {
+    setSelectedSubject(record);
+    setDrawerVisible(true);
+  };
+
+  const handleNavigateToTasks = (record) => {
+    navigate(`/student/subjects/${record.id}/tasks`, {
+      state: { record },
+    });
+  };
+
   const getUniqueFilters = (dataKey) => {
     const uniqueValues = [...new Set(dataSource.map(item => item[dataKey]))];
     return uniqueValues.map(value => ({
@@ -82,15 +106,16 @@ const StudentGroupList = () => {
       width: 70,
       fixed: 'left',
       render: (text, record, index) => (
-        <Badge
-          count={page * size + index + 1}
-          style={{ backgroundColor: '#52c41a' }}
-        />
+          <Badge
+              count={page * size + index + 1}
+              style={{ backgroundColor: '#52c41a' }}
+          />
       ),
+      responsive: ["sm"],
     },
     {
       title: (
-        <span>
+          <span>
           <BookOutlined style={{ marginRight: 8, color: '#1890ff' }} />
           Course
         </span>
@@ -102,14 +127,14 @@ const StudentGroupList = () => {
       filters: getUniqueFilters('courseName'),
       onFilter: (value, record) => record.courseName.includes(value),
       render: (text) => (
-        <Tooltip title={text}>
-          <Text strong style={{ color: '#1890ff' }}>{text}</Text>
-        </Tooltip>
+          <Tooltip title={text}>
+            <Text strong style={{ color: '#1890ff', fontSize: isMobile ? 13 : 14 }}>{text}</Text>
+          </Tooltip>
       ),
     },
     {
       title: (
-        <span>
+          <span>
           <TeamOutlined style={{ marginRight: 8, color: '#faad14' }} />
           Group
         </span>
@@ -120,10 +145,11 @@ const StudentGroupList = () => {
       filters: getUniqueFilters('groupName'),
       onFilter: (value, record) => record.groupName.includes(value),
       render: (text) => <Tag color="orange">{text}</Tag>,
+      responsive: ["md"],
     },
     {
       title: (
-        <span>
+          <span>
           <UserOutlined style={{ marginRight: 8, color: '#722ed1' }} />
           Teacher
         </span>
@@ -134,202 +160,323 @@ const StudentGroupList = () => {
       filters: getUniqueFilters('teacherName'),
       onFilter: (value, record) => record.teacherName.includes(value),
       render: (text) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar size="small" style={{ backgroundColor: '#722ed1', marginRight: 8 }}>
-            {text.charAt(0)}
-          </Avatar>
-          <Text>{text}</Text>
-        </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar size="small" style={{ backgroundColor: '#722ed1', marginRight: 8 }}>
+              {text.charAt(0)}
+            </Avatar>
+            <Text style={{ fontSize: isMobile ? 13 : 14 }}>{text}</Text>
+          </div>
       ),
+      responsive: ["lg"],
     },
     {
       title: "Action",
       key: "action",
-      width: 150,
+      width: isMobile ? 100 : 150,
       fixed: "right",
-      render: (_, record) => {
-
-        return (
+      render: (_, record) => (
           <Space size="small">
+            {isMobile && (
+                <Button
+                    type="text"
+                    icon={<EyeOutlined />}
+                    size="small"
+                    onClick={() => handleViewDetails(record)}
+                />
+            )}
             <Button
-              type="primary"
-              icon={<ArrowRightOutlined />}
-              size="small"
-              onClick={() =>
-                navigate(`/student/subjects/${record.id}/tasks`, {
-                  state: { record },
-                })
-              }
+                type="primary"
+                icon={<ArrowRightOutlined />}
+                size="small"
+                onClick={() => handleNavigateToTasks(record)}
             >
-              Tasks
+              {isMobile ? "" : "Tasks"}
             </Button>
           </Space>
-        );
-      },
+      ),
     },
   ];
 
   const expandableConfig = {
     expandedRowRender: (record) => (
-      <div style={{ padding: '16px 0' }}>
-        <Row gutter={[16, 8]}>
-          <Col span={8}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <UserOutlined style={{ color: '#722ed1', marginRight: 8 }} />
-              <Text strong>Teacher:</Text>
-            </div>
-            <Text style={{ marginLeft: 24 }}>{record.teacherName}</Text>
-          </Col>
-          <Col span={8}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <TeamOutlined style={{ color: '#faad14', marginRight: 8 }} />
-              <Text strong>Group:</Text>
-            </div>
-            <Text style={{ marginLeft: 24 }}>{record.groupName}</Text>
-          </Col>
-          <Col span={8}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <BookOutlined style={{ color: '#1890ff', marginRight: 8 }} />
-              <Text strong>Course:</Text>
-            </div>
-            <Text style={{ marginLeft: 24 }}>{record.courseName}</Text>
-          </Col>
-        </Row>
-      </div>
+        <div style={{ padding: isMobile ? '12px 0' : '16px 0' }}>
+          <Row gutter={[isMobile ? 8 : 16, 8]}>
+            <Col xs={24} sm={8}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <UserOutlined style={{ color: '#722ed1', marginRight: 8 }} />
+                <Text strong style={{ fontSize: isMobile ? 12 : 13 }}>Teacher:</Text>
+              </div>
+              <Text style={{ marginLeft: 24, fontSize: isMobile ? 12 : 14 }}>{record.teacherName}</Text>
+            </Col>
+            <Col xs={24} sm={8}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <TeamOutlined style={{ color: '#faad14', marginRight: 8 }} />
+                <Text strong style={{ fontSize: isMobile ? 12 : 13 }}>Group:</Text>
+              </div>
+              <Text style={{ marginLeft: 24, fontSize: isMobile ? 12 : 14 }}>{record.groupName}</Text>
+            </Col>
+            <Col xs={24} sm={8}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <BookOutlined style={{ color: '#1890ff', marginRight: 8 }} />
+                <Text strong style={{ fontSize: isMobile ? 12 : 13 }}>Course:</Text>
+              </div>
+              <Text style={{ marginLeft: 24, fontSize: isMobile ? 12 : 14 }}>{record.courseName}</Text>
+            </Col>
+          </Row>
+        </div>
     ),
-    rowExpandable: (record) => true,
+    rowExpandable: (record) => !isMobile,
   };
 
-  // const rowSelection = {
-  //   selectedRowKeys,
-  //   onChange: setSelectedRowKeys,
-  // };
+  // Mobile Card View
+  const MobileCardView = () => (
+      <Space direction="vertical" style={{ width: "100%" }} size="middle">
+        {dataSource.map((subject, index) => (
+            <Card
+                key={subject.id}
+                size="small"
+                className="subject-card"
+                style={{
+                  borderRadius: 8,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  borderLeft: "4px solid #1890ff",
+                }}
+            >
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <Badge
+                        count={page * size + index + 1}
+                        style={{ backgroundColor: '#52c41a', marginBottom: 8 }}
+                    />
+                    <Title level={5} style={{ margin: "4px 0 8px 0", fontSize: 15, color: '#1890ff' }}>
+                      <BookOutlined style={{ marginRight: 6 }} />
+                      {subject.courseName}
+                    </Title>
+                  </div>
+                </div>
+
+                <Space direction="vertical" size="small" style={{ width: "100%", marginBottom: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <TeamOutlined style={{ color: "#faad14" }} />
+                    <Text style={{ fontSize: 12 }}>
+                      <Text type="secondary">Group: </Text>
+                      <Tag color="orange" style={{ marginLeft: 4 }}>{subject.groupName}</Tag>
+                    </Text>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <Avatar size="small" style={{ backgroundColor: '#722ed1' }}>
+                      {subject.teacherName.charAt(0)}
+                    </Avatar>
+                    <Text style={{ fontSize: 12 }}>
+                      <Text type="secondary">Teacher: </Text>
+                      <Text strong>{subject.teacherName}</Text>
+                    </Text>
+                  </div>
+                </Space>
+              </div>
+
+              <div style={{ display: "flex", gap: 6 }}>
+                <Button
+                    icon={<EyeOutlined />}
+                    onClick={() => handleViewDetails(subject)}
+                    size="small"
+                    style={{ flex: 1 }}
+                >
+                  Details
+                </Button>
+                <Button
+                    icon={<ArrowRightOutlined />}
+                    onClick={() => handleNavigateToTasks(subject)}
+                    type="primary"
+                    size="small"
+                    style={{ flex: 1 }}
+                >
+                  View Tasks
+                </Button>
+              </div>
+            </Card>
+        ))}
+      </Space>
+  );
 
   if (loading && dataSource.length === 0) {
     return (
-      <div style={{ padding: '24px' }}>
-        <Skeleton active paragraph={{ rows: 8 }} />
-      </div>
+        <div style={{ padding: isMobile ? '16px' : '24px' }}>
+          <Skeleton active paragraph={{ rows: 8 }} />
+        </div>
     );
   }
 
   return (
-    <Fragment>
-      {/* Header Section */}
-      <div style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        borderRadius: '16px',
-        padding: '32px',
-        marginBottom: '24px',
-        color: 'white'
-      }}>
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Title level={2} style={{ color: 'white', margin: 0 }}>
-              <BookOutlined style={{ marginRight: 12 }} />
-              My Subjects
-            </Title>
-            <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: '16px' }}>
-              Manage your enrolled courses and assignments
-            </Text>
-          </Col>
-          <Col>
-            <SearchComponent
-              placeholder="Search subjects... (Ctrl+K)"
-              handleSearch={handleSearch}
-              loading={loading}
-            />
-          </Col>
-        </Row>
-      </div>
-
-      {/* Controls Section */}
-      <Card
-        style={{ marginBottom: '16px', borderRadius: '12px' }}
-        bodyStyle={{ padding: '16px 24px' }}
-      >
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Space size="middle">
-              <Text strong>
-                Total Subjects: <Badge count={totalElements} style={{ backgroundColor: '#52c41a' }} />
+      <Fragment>
+        {/* Header Section */}
+        <div style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: isMobile ? '12px' : '16px',
+          padding: isMobile ? '20px' : '32px',
+          marginBottom: isMobile ? '16px' : '24px',
+          color: 'white'
+        }}>
+          <Row justify="space-between" align="middle" gutter={[0, isMobile ? 12 : 0]}>
+            <Col xs={24} md={12}>
+              <Title level={isMobile ? 3 : 2} style={{ color: 'white', margin: 0, fontSize: isMobile ? '20px' : undefined }}>
+                <BookOutlined style={{ marginRight: isMobile ? 8 : 12 }} />
+                My Subjects
+              </Title>
+              <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: isMobile ? '13px' : '16px' }}>
+                {isMobile ? 'Manage your courses' : 'Manage your enrolled courses and assignments'}
               </Text>
-              {selectedRowKeys.length > 0 && (
-                <Text>
-                  Selected: <Badge count={selectedRowKeys.length} style={{ backgroundColor: '#1890ff' }} />
-                </Text>
-              )}
-            </Space>
-          </Col>
-          <Col>
-            <Space>
-              <Tooltip title="Refresh data">
-                <Button
-                  icon={<ReloadOutlined />}
-                  onClick={handleRefresh}
+            </Col>
+            <Col xs={24} md={12}>
+              <SearchComponent
+                  placeholder={isMobile ? "Search..." : "Search subjects... (Ctrl+K)"}
+                  handleSearch={handleSearch}
                   loading={loading}
-                >
-                  Refresh
-                </Button>
-              </Tooltip>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
+              />
+            </Col>
+          </Row>
+        </div>
 
-      {/* Table Section */}
-      {dataSource.length === 0 && !loading ? (
-        <Card style={{ textAlign: 'center', padding: '48px', borderRadius: '12px' }}>
-          <Empty
-            description={
-              <span>
-                {searchText ? `No subjects found for "${searchText}"` : "No subjects available"}
-              </span>
-            }
-          >
-            {searchText && (
-              <Button type="primary" onClick={() => handleSearch('')}>
-                Clear Search
-              </Button>
-            )}
-          </Empty>
-        </Card>
-      ) : (
-        <Card style={{ borderRadius: '12px' }} bodyStyle={{ padding: 0 }}>
-          <Table
-            dataSource={dataSource}
-            columns={columns}
-            rowKey="id"
-            expandable={expandableConfig}
-            // rowSelection={rowSelection}
-            pagination={{
-              current: page + 1,
-              pageSize: size,
-              total: totalElements,
-              onChange: handlePagination,
-              onShowSizeChange: handlePageSizeChange,
-              showSizeChanger: true,
-              pageSizeOptions: ["5", "10", "20", "50", "100"],
-              showQuickJumper: true,
-              showTotal: (total, range) =>
-                `Showing ${range[0]}-${range[1]} of ${total} subjects`,
-              responsive: true,
-              style: { padding: '16px 24px' }
-            }}
-            loading={loading}
-            scroll={{ x: 'max-content', y: 400 }}
-            sticky
-            size="middle"
-            style={{
-              borderRadius: '12px',
-              overflow: 'hidden'
-            }}
-          />
-        </Card>
-      )}
+        {/* Table or Card View */}
+        {dataSource.length === 0 && !loading ? (
+            <Card style={{ textAlign: 'center', padding: isMobile ? '32px' : '48px', borderRadius: isMobile ? '8px' : '12px' }}>
+              <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+                <BookOutlined style={{ fontSize: isMobile ? 48 : 64, color: '#d9d9d9', marginBottom: 16 }} />
+                <Title level={isMobile ? 4 : 3} type="secondary">
+                  {searchText ? `No subjects found for "${searchText}"` : "No subjects available"}
+                </Title>
+                {searchText && (
+                    <Button type="primary" onClick={() => handleSearch('')} size={isMobile ? "middle" : "large"}>
+                      Clear Search
+                    </Button>
+                )}
+              </div>
+            </Card>
+        ) : isMobile ? (
+            <>
+              <MobileCardView />
 
-      {/* Custom Styles */}
-      <style jsx={true}>{`
+              {/* Mobile Pagination */}
+              <Card size="small" style={{ marginTop: 16, textAlign: "center" }}>
+                <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    Page {page + 1} of {Math.ceil(totalElements / size)}
+                  </Text>
+                  <Space size="small">
+                    <Button
+                        size="small"
+                        onClick={() => handlePagination(page)}
+                        disabled={page === 0}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                        size="small"
+                        onClick={() => handlePagination(page + 2)}
+                        disabled={(page + 1) * size >= totalElements}
+                    >
+                      Next
+                    </Button>
+                  </Space>
+                  <Text type="secondary" style={{ fontSize: 11 }}>
+                    Total: {totalElements} subjects
+                  </Text>
+                </Space>
+              </Card>
+            </>
+        ) : (
+            <Card style={{ borderRadius: '12px' }} bodyStyle={{ padding: 0 }}>
+              <Table
+                  dataSource={dataSource}
+                  columns={columns}
+                  rowKey="id"
+                  expandable={expandableConfig}
+                  pagination={{
+                    current: page + 1,
+                    pageSize: size,
+                    total: totalElements,
+                    onChange: handlePagination,
+                    onShowSizeChange: handlePageSizeChange,
+                    showSizeChanger: true,
+                    pageSizeOptions: ["5", "10", "20", "50", "100"],
+                    showQuickJumper: !isTablet,
+                    showTotal: (total, range) =>
+                        `Showing ${range[0]}-${range[1]} of ${total} subjects`,
+                    responsive: true,
+                    style: { padding: '16px 24px' },
+                    size: isTablet ? "small" : "default",
+                  }}
+                  loading={loading}
+                  scroll={{ x: isTablet ? 800 : 'max-content', y: 400 }}
+                  sticky
+                  size={isTablet ? "small" : "middle"}
+                  style={{
+                    borderRadius: '12px',
+                    overflow: 'hidden'
+                  }}
+              />
+            </Card>
+        )}
+
+        {/* Subject Details Drawer */}
+        <Drawer
+            title="Subject Details"
+            placement="bottom"
+            onClose={() => setDrawerVisible(false)}
+            open={drawerVisible}
+            height="60vh"
+        >
+          {selectedSubject && (
+              <>
+                <div style={{ textAlign: "center", marginBottom: 20 }}>
+                  <Avatar
+                      size={64}
+                      icon={<BookOutlined />}
+                      style={{ backgroundColor: "#1890ff", marginBottom: 12 }}
+                  />
+                  <Title level={4} style={{ margin: 0 }}>
+                    {selectedSubject.courseName}
+                  </Title>
+                </div>
+
+                <Descriptions column={1} bordered size="small">
+                  <Descriptions.Item label={<><BookOutlined /> Course</>}>
+                    <Text strong>{selectedSubject.courseName}</Text>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<><TeamOutlined /> Group</>}>
+                    <Tag color="orange">{selectedSubject.groupName}</Tag>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<><UserOutlined /> Teacher</>}>
+                    <Space>
+                      <Avatar size="small" style={{ backgroundColor: '#722ed1' }}>
+                        {selectedSubject.teacherName.charAt(0)}
+                      </Avatar>
+                      <Text>{selectedSubject.teacherName}</Text>
+                    </Space>
+                  </Descriptions.Item>
+                </Descriptions>
+
+                <div style={{ marginTop: 16 }}>
+                  <Button
+                      icon={<ArrowRightOutlined />}
+                      onClick={() => {
+                        setDrawerVisible(false);
+                        handleNavigateToTasks(selectedSubject);
+                      }}
+                      type="primary"
+                      block
+                      size="large"
+                  >
+                    View Tasks
+                  </Button>
+                </div>
+              </>
+          )}
+        </Drawer>
+
+        {/* Custom Styles */}
+        <style jsx={true}>{`
         .ant-table-thead > tr > th {
           background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
           border-bottom: 2px solid #e8e8e8;
@@ -340,10 +487,13 @@ const StudentGroupList = () => {
           background: #f0f9ff !important;
         }
         
+        .subject-card {
+          transition: all 0.3s ease;
+        }
+        
         .subject-card:hover {
           transform: translateY(-2px);
           box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-          transition: all 0.3s ease;
         }
         
         .ant-badge-count {
@@ -360,7 +510,7 @@ const StudentGroupList = () => {
           box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
         }
       `}</style>
-    </Fragment>
+      </Fragment>
   );
 };
 

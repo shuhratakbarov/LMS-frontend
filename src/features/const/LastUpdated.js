@@ -24,7 +24,7 @@ const LastUpdated = () => {
   }, [lastUpdated]);
 
   return (
-    <div style={{float: 'right', paddingTop: '2vh'}}>
+    <div style={{float: 'right',}}>
       <span>Last updated: {timeAgo}</span>
     </div>
   );

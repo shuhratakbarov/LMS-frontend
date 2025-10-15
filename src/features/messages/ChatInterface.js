@@ -1,5 +1,5 @@
-import { useEffect} from "react";
-import { Layout, message as antMessage } from "antd";
+import {useEffect, useState} from "react";
+import {Button, Drawer, Layout, message as antMessage} from "antd";
 import { useChatState } from "../../hooks/useChatState";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import ConversationSidebar from './ConversationSidebar';
@@ -11,6 +11,19 @@ import webSocketService from "../../services/WebSocketService";
 import { generateTempId, playSendSound } from "../../utils/util";
 
 const ChatInterface = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // Auto-close sidebar when resizing to desktop
+      if (!mobile) setSidebarVisible(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const user = getUserCredentials();
@@ -39,7 +52,7 @@ const ChatInterface = () => {
     setOtherLastReadMessageId, setSelfLastReadMessageId,
     setOtherLastReadMessageCreatedAt, setFirstUnreadIndex, setUserPresence,
     setTypingByConversation,
-    scrollToBottom : () => {
+    scrollToBottom: () => {
       messagesEndRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "end"
@@ -62,6 +75,9 @@ const ChatInterface = () => {
     setSelectedUserTarget(null);
     setLoading(true);
 
+    // Close sidebar on mobile after selection
+    if (isMobile) setSidebarVisible(false);
+
     try {
       const res = await getMessages(conversation.id, 0);
       const sortedMessages = [...res.data.messages.content].reverse();
@@ -73,14 +89,14 @@ const ChatInterface = () => {
         setOtherLastReadMessageId(res?.data?.otherLastReadMessageId);
       }
       const unreadIndex = res?.data?.selfLastReadMessageId
-        ? sortedMessages.findIndex((m) => m.id === res?.data?.selfLastReadMessageId) + 1
-        : -1;
+          ? sortedMessages.findIndex((m) => m.id === res?.data?.selfLastReadMessageId) + 1
+          : -1;
 
       setFirstUnreadIndex(unreadIndex);
 
       const otherLastReadIndex = res?.data?.otherLastReadMessageId
-        ? sortedMessages.findIndex((m) => m.id === res?.data?.otherLastReadMessageId)
-        : -1;
+          ? sortedMessages.findIndex((m) => m.id === res?.data?.otherLastReadMessageId)
+          : -1;
 
       setOtherLastReadMessageCreatedAt(sortedMessages[otherLastReadIndex]?.createdAt);
       setMessages(sortedMessages);
@@ -100,7 +116,6 @@ const ChatInterface = () => {
       let conversation = selectedConversation;
       let conversationId = conversation?.id;
 
-      // --- Create new conversation if needed ---
       if (!conversation && selectedUserTarget) {
         const data = {
           isGroup: false,
@@ -114,27 +129,6 @@ const ChatInterface = () => {
         setSelectedConversation(conversation);
         setConversations((prev) => [conversation, ...prev]);
         setSelectedUserTarget(null);
-
-        // Subscribe to messages for this conversation
-        // webSocketService.subscribeToGroupMessages(conversation.id, (msg) => {
-        //   setMessages((prev) => {
-        //     // Try to replace optimistic one (id === null)
-        //     const idx = prev.findIndex(
-        //       (m) =>
-        //         m.id === null &&
-        //         m.content === msg.content &&
-        //         m.senderId === msg.senderId
-        //     );
-        //     if (idx !== -1) {
-        //       const updated = [...prev];
-        //       updated[idx] = { ...msg };
-        //       return updated;
-        //     }
-        //     return [...prev, msg];
-        //   });
-        //   playSound();
-        //   scrollToBottomForced();
-        // });
 
         conversationId = conversation.id;
       }
@@ -159,8 +153,6 @@ const ChatInterface = () => {
       setMessageInput("");
       scrollToBottomForced();
       playSendSound();
-
-      // stop typing indicator
 
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       isTypingRef.current = false;
@@ -195,7 +187,7 @@ const ChatInterface = () => {
   const handleJoinGroup = async () => {
     const { data: messages } = await joinGroupMessages(selectedConversation.id)
     setSelectedConversation((prev) => ({ ...prev, exists: true }));
-    setMessages(messages); // assumes setMessages updates message history
+    setMessages(messages);
     scrollToBottomForced();
   };
 
@@ -214,23 +206,20 @@ const ChatInterface = () => {
 
     const lowerTerm = term.toLowerCase();
 
-    // 1. Local matches
     const local = (Array.isArray(conversations) ? conversations : []).filter(conv =>
-      conv.name?.toLowerCase().includes(lowerTerm) ||
-      conv.username?.toLowerCase().includes(lowerTerm)
+        conv.name?.toLowerCase().includes(lowerTerm) ||
+        conv.username?.toLowerCase().includes(lowerTerm)
     );
 
     setLocalMatches(local);
 
-    // 2. Call backend only if matches < threshold
-    if (local.length < SEARCH_THRESHOLD && term.length>=3) {
+    if (local.length < SEARCH_THRESHOLD && term.length >= 3) {
       try {
-        const res = await searchConversations(term, searchType); // "user" or "group"
+        const res = await searchConversations(term, searchType);
         const remote = res.data || [];
 
-        // Remove local duplicates
         const remoteFiltered = remote.filter(r =>
-          !local.some(l => l.username === r.username && l.isGroup === r.isGroup)
+            !local.some(l => l.username === r.username && l.isGroup === r.isGroup)
         );
 
         setGlobalMatches(remoteFiltered);
@@ -239,7 +228,7 @@ const ChatInterface = () => {
         antMessage.error("Failed to search");
       }
     } else {
-      setGlobalMatches([]); // no need to search globally
+      setGlobalMatches([]);
     }
   };
 
@@ -248,9 +237,10 @@ const ChatInterface = () => {
       if (localMatches.includes(item)) {
         handleConversationSelect(item)
       } else {
-        setSelectedUserTarget(item); // Used for rendering preview
+        setSelectedUserTarget(item);
         setSelectedConversation(null);
         setMessages([]);
+        if (isMobile) setSidebarVisible(false);
       }
     } else {
       if (localMatches.includes(item)) {
@@ -259,6 +249,7 @@ const ChatInterface = () => {
         setGroupPreview(item);
         setSelectedConversation(null);
         setMessages([]);
+        if (isMobile) setSidebarVisible(false);
       }
     }
     setSearchMode(false);
@@ -273,70 +264,128 @@ const ChatInterface = () => {
     setShowScrollToBottom(!isAtBottom && firstUnreadIndex >= 0);
   };
 
+  const handleBackToConversations = () => {
+    setSelectedConversation(null);
+    setSelectedUserTarget(null);
+    setMessages([]);
+    setSidebarVisible(true);
+  };
+
   const filteredConversations = Array.isArray(chatState.conversations)
-    ? chatState.conversations.filter(conv => {
-      const term = chatState.searchTerm.toLowerCase();
-      return (
-        conv.name?.toLowerCase().includes(term) ||
-        conv.username?.toLowerCase().includes(term)
-      );
-    })
-    : [];
+      ? chatState.conversations.filter(conv => {
+        const term = chatState.searchTerm.toLowerCase();
+        return (
+            conv.name?.toLowerCase().includes(term) ||
+            conv.username?.toLowerCase().includes(term)
+        );
+      })
+      : [];
 
   const filterBySearchType = (list) =>
-    list.filter(item =>
-      chatState.searchType === "user" ? !item.isGroup : item.isGroup
-    );
+      list.filter(item =>
+          chatState.searchType === "user" ? !item.isGroup : item.isGroup
+      );
 
   const filteredLocalMatches = filterBySearchType(chatState.localMatches);
   const filteredGlobalMatches = filterBySearchType(chatState.globalMatches);
 
-  return (
-    <Layout style={{ height: "calc(100vh - 12.5vh)", background: "#f0f2f5" }}>
-      <ConversationSidebar
-        currentUser={currentUser}
-        searchTerm={chatState.searchTerm}
-        onSearchChange={handleSearch}
-        showTypeToggle={chatState.showTypeToggle}
-        setShowTypeToggle={chatState.setShowTypeToggle}
-        searchType={chatState.searchType}
-        setSearchType={chatState.setSearchType}
-        conversationsLoading={chatState.conversationsLoading}
-        searchMode={chatState.searchMode}
-        filteredLocalMatches={filteredLocalMatches}
-        filteredGlobalMatches={filteredGlobalMatches}
-        onlineUsernames={chatState.onlineUsernames}
-        onSearchResultClick={handleSearchResultClick}
-        filteredConversations={filteredConversations}
-        selectedConversation={chatState.selectedConversation}
-        onConversationSelect={handleConversationSelect}
-        typing={typing}
-        typingByConversation={typingByConversation}
-      />
+  // Mobile: Show chat area if conversation selected, otherwise show button to open sidebar
+  const showChatArea = isMobile ? (selectedConversation || selectedUserTarget) : true;
+  const showSidebarContent = !isMobile || !showChatArea;
 
-      <ChatArea
-        selectedConversation={chatState.selectedConversation}
-        selectedUserTarget={chatState.selectedUserTarget}
-        onlineUsernames={chatState.onlineUsernames}
-        userPresence={userPresence}
-        messages={chatState.messages}
-        loading={chatState.loading}
-        typing={typing}
-        typingByConversation={typingByConversation}
-        currentUser={chatState.currentUser}
-        firstUnreadIndex={chatState.firstUnreadIndex}
-        messageInput={chatState.messageInput}
-        onInputChange={handleInputChange}
-        onSendMessage={handleSendMessage}
-        onJoinGroup={handleJoinGroup}
-        messageEndRef={messagesEndRef}
-        containerRef={containerRef}
-        showScrollToBottom={showScrollToBottom}
-        onScrollToBottom={scrollToBottomForced}
-        onScroll={handleScroll}
-        otherLastReadMessageCreatedAt={otherLastReadMessageCreatedAt}
-      />
-    </Layout>
+  return (
+      <Layout style={{ height: "calc(100vh - 12.5vh)", background: "#fff" }}>
+        {/* Desktop Sidebar */}
+        {(!isMobile || (isMobile && !showChatArea)) && (
+            <ConversationSidebar
+                currentUser={currentUser}
+                searchTerm={chatState.searchTerm}
+                onSearchChange={handleSearch}
+                showTypeToggle={chatState.showTypeToggle}
+                setShowTypeToggle={chatState.setShowTypeToggle}
+                searchType={chatState.searchType}
+                setSearchType={chatState.setSearchType}
+                conversationsLoading={chatState.conversationsLoading}
+                searchMode={chatState.searchMode}
+                filteredLocalMatches={filteredLocalMatches}
+                filteredGlobalMatches={filteredGlobalMatches}
+                onlineUsernames={chatState.onlineUsernames}
+                onSearchResultClick={handleSearchResultClick}
+                filteredConversations={filteredConversations}
+                selectedConversation={chatState.selectedConversation}
+                onConversationSelect={handleConversationSelect}
+                typing={typing}
+                typingByConversation={typingByConversation}
+                isMobile={isMobile}
+            />
+        )}
+
+        {/* Mobile Drawer Sidebar */}
+        {/*{isMobile && (*/}
+        {/*    <Drawer*/}
+        {/*        title="Messages"*/}
+        {/*        placement="left"*/}
+        {/*        onClose={() => setSidebarVisible(false)}*/}
+        {/*        open={sidebarVisible}*/}
+        {/*        width="85%"*/}
+        {/*        styles={{*/}
+        {/*          body: { padding: 0 }*/}
+        {/*        }}*/}
+        {/*    >*/}
+        {/*      <ConversationSidebar*/}
+        {/*          currentUser={currentUser}*/}
+        {/*          searchTerm={chatState.searchTerm}*/}
+        {/*          onSearchChange={handleSearch}*/}
+        {/*          showTypeToggle={chatState.showTypeToggle}*/}
+        {/*          setShowTypeToggle={chatState.setShowTypeToggle}*/}
+        {/*          searchType={chatState.searchType}*/}
+        {/*          setSearchType={chatState.setSearchType}*/}
+        {/*          conversationsLoading={chatState.conversationsLoading}*/}
+        {/*          searchMode={chatState.searchMode}*/}
+        {/*          filteredLocalMatches={filteredLocalMatches}*/}
+        {/*          filteredGlobalMatches={filteredGlobalMatches}*/}
+        {/*          onlineUsernames={chatState.onlineUsernames}*/}
+        {/*          onSearchResultClick={handleSearchResultClick}*/}
+        {/*          filteredConversations={filteredConversations}*/}
+        {/*          selectedConversation={chatState.selectedConversation}*/}
+        {/*          onConversationSelect={handleConversationSelect}*/}
+        {/*          typing={typing}*/}
+        {/*          typingByConversation={typingByConversation}*/}
+        {/*          isMobile={true}*/}
+        {/*      />*/}
+        {/*    </Drawer>*/}
+        {/*)}*/}
+
+        {/* Chat Area */}
+        {/* Chat Area - Show only on desktop or when conversation selected on mobile */}
+        {showChatArea && (
+            <ChatArea
+                selectedConversation={chatState.selectedConversation}
+                selectedUserTarget={chatState.selectedUserTarget}
+                onlineUsernames={chatState.onlineUsernames}
+                userPresence={userPresence}
+                messages={chatState.messages}
+                loading={chatState.loading}
+                typing={typing}
+                typingByConversation={typingByConversation}
+                currentUser={chatState.currentUser}
+                firstUnreadIndex={chatState.firstUnreadIndex}
+                messageInput={chatState.messageInput}
+                onInputChange={handleInputChange}
+                onSendMessage={handleSendMessage}
+                onJoinGroup={handleJoinGroup}
+                messageEndRef={messagesEndRef}
+                containerRef={containerRef}
+                showScrollToBottom={showScrollToBottom}
+                onScrollToBottom={scrollToBottomForced}
+                onScroll={handleScroll}
+                otherLastReadMessageCreatedAt={otherLastReadMessageCreatedAt}
+                isMobile={isMobile}
+                onBack={handleBackToConversations}
+                onOpenSidebar={() => setSidebarVisible(true)}
+            />
+        )}
+      </Layout>
   );
 };
 

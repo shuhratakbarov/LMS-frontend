@@ -1,13 +1,16 @@
 import { notification, Tag } from "antd";
 import {
+  AlertOutlined,
   BarChartOutlined,
   BellOutlined,
-  BookOutlined, CalendarOutlined, ExclamationCircleOutlined,
-  FileTextOutlined,
-  MessageOutlined,
+  BookOutlined, CalendarOutlined, CustomerServiceOutlined, ExclamationCircleOutlined, ExportOutlined,
+  FileTextOutlined, LogoutOutlined,
+  MessageOutlined, SettingOutlined,
   TeamOutlined,
   UserOutlined
 } from "@ant-design/icons";
+import {Link, useNavigate} from "react-router-dom";
+import {handleLogout} from "./auth";
 
 export const formatMessageTime = (timestamp) => {
   const date = new Date(timestamp);
@@ -247,3 +250,52 @@ export const getTimeAgo = (date) => {
   if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
   return updateDate.toLocaleDateString();
 };
+
+export const dropdownMenu = (navigate) => {
+  return [
+    {
+      key: "1",
+      label: (
+          <Link to="/settings">
+            <SettingOutlined/>&nbsp;&nbsp;Settings
+          </Link>
+      )
+    },
+    {
+      key: "2",
+      label: (
+          <Link to="/settings">
+            <CustomerServiceOutlined/>&nbsp;&nbsp;Help & Support
+          </Link>
+      )
+    },
+    {
+      key: "3",
+      label: (
+          <Link to="/settings">
+            <AlertOutlined/>&nbsp;&nbsp;Feedback / Report Issue
+          </Link>
+      )
+    },
+    {
+      key: "4",
+      label: (
+          <Link to="/settings">
+            <ExportOutlined/>&nbsp;&nbsp;Export Data
+          </Link>
+      )
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: "5",
+      label: (
+          <span onClick={() => handleLogout(navigate)}>
+          <LogoutOutlined/>&nbsp;&nbsp;Log out
+        </span>
+      ),
+      danger: true,
+    }
+  ];
+}

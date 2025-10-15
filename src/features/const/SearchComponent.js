@@ -46,7 +46,6 @@ const SearchComponent = ({ placeholder, handleSearch, loading }) => {
       }
       allowClear
       onClear={onClear}
-      style={{ width: 320 }}
       size="middle"
     />
   );

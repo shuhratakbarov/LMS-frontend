@@ -4,7 +4,7 @@ import Login from "./features/auth/Login";
 import { useEffect, useState } from "react";
 import { Spin } from "antd";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import UserLayout from "./features/const/layout/UserLayout";
+import SystemLayout from "./features/const/layout/SystemLayout";
 import AdminDashboard from "./features/admin/dashboard/AdminDashboard";
 import CourseList from "./features/admin/courses/CourseList";
 import GroupList from "./features/admin/groups/GroupList";
@@ -28,7 +28,7 @@ import PasswordResetConfirm from "./features/auth/PasswordResetConfirm";
 import ChatInterface from "./features/messages/ChatInterface";
 import webSocketService from "./services/WebSocketService";
 import { useChatState } from "./hooks/useChatState";
-import Dashboard from "./features/dashboard/Dashboard";
+import UserDashboard from "./features/dashboard/UserDashboard";
 import UserProfile from "./features/user-profile/UserProfile";
 import Prophylactics from "./features/const/Prophylactics";
 
@@ -42,9 +42,9 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const user = getUserCredentials();
 
-  const checkAuth = async () => {
+  const checkAuth = () => {
     setIsLoading(true);
-    const canLogin = await canUserLogin();
+    const canLogin = canUserLogin();
     setIsAuthenticated(canLogin);
     setIsLoading(false);
   };
@@ -74,7 +74,7 @@ const App = () => {
       ) : isAuthenticated ? (
         <Routes>
           <Route path="/login" element={<Navigate to="/" />} />
-          <Route path="/" element={<UserLayout user={user} isConnected={isConnected} />}>
+          <Route path="/" element={<SystemLayout user={user} isConnected={isConnected} />}>
             {user.roleName === "ADMIN" && (
               <>
                 <Route index element={<Navigate to="/admin/dashboard" />} />
@@ -94,7 +94,7 @@ const App = () => {
             {user.roleName === "TEACHER" && (
               <>
                 <Route index element={<Navigate to="/teacher/dashboard" />} />
-                <Route path="teacher/dashboard" element={<Dashboard user={user}/>} />
+                <Route path="teacher/dashboard" element={<UserDashboard user={user}/>} />
                 <Route path="teacher/profile" element={<UserProfile user={user} />} />
                 <Route path="teacher/groups" element={<TeacherGroupList />} />
                 <Route path="teacher/groups/:groupId/tasks" element={<TeacherTaskList />} />
@@ -108,7 +108,7 @@ const App = () => {
             {user.roleName === "STUDENT" && (
               <>
                 <Route index element={<Navigate to="/student/dashboard" />} />
-                <Route path="student/dashboard" element={<Dashboard user={user}/>} />
+                <Route path="student/dashboard" element={<UserDashboard user={user}/>} />
                 <Route path="student/profile" element={<UserProfile user={user}/>} />
                 <Route path="student/subjects" element={<StudentGroupList />} />
                 <Route path="student/subjects/:groupId/tasks" element={<StudentHomeworkList />} />

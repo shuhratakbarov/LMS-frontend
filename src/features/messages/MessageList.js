@@ -47,7 +47,7 @@ const MessageList = ({
             ref={containerRef}
             style={{
                 flex: 1,
-                padding: isMobile ? "12px" : "16px",
+                padding: isMobile ? "2px" : "10px",
                 overflow: "auto",
                 background: "#fafafa"
             }}

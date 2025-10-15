@@ -297,7 +297,7 @@ const SystemLayout = ({user, isConnected}) => {
                                         style={{
                                             border: '2px solid rgba(255, 255, 255, 0.1)',
                                             boxShadow: isConnected
-                                                ? '0 0 10px rgba(22, 119, 255, 1)'
+                                                ? '0 0 10px rgba(22, 119, 255, 0.5)'
                                                 : '0 0 8px rgba(255, 77, 79, 1)',
                                             transition: 'all 0.2s ease-in-out',
                                             backgroundColor: "#949494",
@@ -345,7 +345,6 @@ const SystemLayout = ({user, isConnected}) => {
                             role={user.roleName}
                         />
 
-
                         <>
                             <Button
                                 type="text"
@@ -360,7 +359,6 @@ const SystemLayout = ({user, isConnected}) => {
                                 title="Analytics"
                             />
                         </>
-
 
                         <Dropdown
                             menu={{items: dropdownMenu(navigate)}}
@@ -382,14 +380,15 @@ const SystemLayout = ({user, isConnected}) => {
                         background: "#f0f2f5",
                         flex: 1,
                         overflow: "auto",
-                        minHeight: "calc(100vh - 64px)"
+                        height: "100%"
+                        // minHeight: "calc(100vh - 64px)"
                     }}
                 >
                     <div
                         style={{
                             background: "#ffffff",
-                            borderRadius: isMobile ? 6 : 8,
-                            padding: isMobile ? "12px" : isTablet ? "16px" : "20px",
+                            // borderRadius: isMobile ? 6 : 8,
+                            padding: isMobile ? "0px" : isTablet ? "4px" : "8px",
                             minHeight: "100%",
                             boxShadow: "0 1px 4px rgba(0,21,41,0.08)"
                         }}

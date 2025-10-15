@@ -1,4 +1,4 @@
-import { Input, Button, Space, Popover } from "antd";
+import { Input, Button, Popover } from "antd";
 import { AudioOutlined, PlusOutlined, SendOutlined, SmileOutlined } from "@ant-design/icons";
 import { EmojiPicker } from "./EmojiPicker";
 import { useRef, useState } from "react";
@@ -30,7 +30,7 @@ const MessageInput = ({
                 textarea.setSelectionRange(start + emoji.length, start + emoji.length);
             }, 0);
         }
-        setEmojiPickerVisible(false);
+        // setEmojiPickerVisible(false);
     };
 
     const handleKeyPress = (e) => {
@@ -44,35 +44,49 @@ const MessageInput = ({
 
     return (
         <div style={{
-            padding: isMobile ? "8px 12px" : "12px 16px",
-            borderTop: "1px solid #f0f0f0",
+            // padding: isMobile ? "0px 0px" : "0px 0px",
+            borderTop: "1px solid #e8e8e8",
             background: "#fff",
             position: "sticky",
-            bottom: 0
+            bottom: 0,
+            marginBottom: isMobile ? "-5.5vh" : "-3.5vh"
         }}>
+            {/* Outer wrapper with border */}
             <div style={{
+                border: "1px solid #d9d9d9",
+                background: "#fafafa",
                 display: "flex",
-                alignItems: "center",
-                gap: 0,
-                width: "100%"
+                alignItems: "flex-end",
+                transition: "all 0.2s ease",
+                overflow: "hidden"
             }}>
                 {/* Attachment button */}
                 <Button
+                    type="text"
                     icon={<PlusOutlined />}
                     style={{
-                        borderRadius: isMobile ? "16px 0 0 16px" : "20px 0 0 20px",
-                        height: isMobile ? "36px" : "40px",
-                        borderColor: "#d9d9d9",
-                        color: "#8c8c8c",
-                        minWidth: isMobile ? "36px" : "40px",
+                        color: "#595959",
+                        minWidth: isMobile ? "40px" : "44px",
+                        height: isMobile ? "40px" : "44px",
+                        padding: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: isMobile ? "16px" : "18px",
                         flexShrink: 0,
-                        fontSize: isMobile ? "14px" : "16px"
+                        border: "none",
+                        borderRadius: 0
                     }}
                     onClick={() => console.log("Attachment clicked")}
                 />
 
-                {/* Text input */}
-                <div style={{ flex: 1, position: "relative" }}>
+                {/* Text input area - expands upward */}
+                <div style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end"
+                }}>
                     <TextArea
                         ref={textAreaRef}
                         value={value}
@@ -82,19 +96,20 @@ const MessageInput = ({
                         disabled={disabled}
                         autoSize={{
                             minRows: 1,
-                            maxRows: isMobile ? 3 : 4
+                            maxRows: isMobile ? 4 : 6
                         }}
                         style={{
                             resize: "none",
-                            borderRadius: 0,
-                            border: "1px solid #d9d9d9",
-                            borderLeft: "none",
-                            borderRight: "none",
+                            border: "none",
+                            background: "transparent",
                             fontSize: isMobile ? "14px" : "15px",
-                            padding: isMobile ? "6px 10px" : "8px 12px",
-                            lineHeight: "1.65",
-                            minHeight: isMobile ? "36px" : "40px"
+                            padding: isMobile ? "10px 8px" : "12px 10px",
+                            lineHeight: "1.5",
+                            boxShadow: "none",
+                            minHeight: isMobile ? "40px" : "44px",
+                            height: isMobile ? "40px" : "44px"
                         }}
+                        className="telegram-input"
                     />
                 </div>
 
@@ -102,28 +117,32 @@ const MessageInput = ({
                 <Popover
                     content={<EmojiPicker onEmojiSelect={handleEmojiSelect} isMobile={isMobile} />}
                     trigger="click"
-                    placement={isMobile ? "topLeft" : "topRight"}
+                    placement="topRight"
                     open={emojiPickerVisible}
                     onOpenChange={setEmojiPickerVisible}
                 >
                     <Button
+                        type="text"
                         icon={<SmileOutlined />}
                         style={{
-                            borderRadius: 0,
-                            height: isMobile ? "36px" : "40px",
-                            borderColor: "#d9d9d9",
-                            color: "#8c8c8c",
-                            minWidth: isMobile ? "36px" : "40px",
-                            borderLeft: "none",
+                            color: "#595959",
+                            minWidth: isMobile ? "40px" : "44px",
+                            height: isMobile ? "40px" : "44px",
+                            padding: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: isMobile ? "16px" : "18px",
                             flexShrink: 0,
-                            fontSize: isMobile ? "14px" : "16px"
+                            border: "none",
+                            borderRadius: 0
                         }}
                     />
                 </Popover>
 
                 {/* Send/Microphone button */}
                 <Button
-                    type={value?.trim() ? "primary" : "default"}
+                    type="text"
                     icon={value?.trim() ? <SendOutlined /> : <AudioOutlined />}
                     onClick={() => {
                         if (value?.trim()) {
@@ -134,17 +153,34 @@ const MessageInput = ({
                     }}
                     disabled={disabled}
                     style={{
-                        borderRadius: isMobile ? "0 16px 16px 0" : "0 20px 20px 0",
-                        height: isMobile ? "36px" : "40px",
-                        minWidth: isMobile ? "36px" : "40px",
-                        backgroundColor: value?.trim() ? "#1890ff" : "#f5f5f5",
-                        borderColor: value?.trim() ? "#1890ff" : "#d9d9d9",
-                        color: value?.trim() ? "#fff" : "#8c8c8c",
+                        color: value?.trim() ? "#1890ff" : "#595959",
+                        minWidth: isMobile ? "40px" : "44px",
+                        height: isMobile ? "40px" : "44px",
+                        padding: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: isMobile ? "16px" : "18px",
                         flexShrink: 0,
-                        fontSize: isMobile ? "14px" : "16px"
+                        transition: "all 0.2s ease",
+                        border: "none",
+                        borderRadius: 0
                     }}
                 />
             </div>
+
+            <style>{`
+                .telegram-input textarea {
+                    background: transparent !important;
+                }
+                .telegram-input textarea:focus {
+                    box-shadow: none !important;
+                    border: none !important;
+                }
+                .telegram-input:hover {
+                    background: transparent !important;
+                }
+            `}</style>
         </div>
     );
 };

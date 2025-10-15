@@ -59,7 +59,7 @@ const ChatArea = ({
     }
 
     return (
-        <Content style={{ background: "#fff", display: "flex", flexDirection: "column", position: "relative" }}>
+        <Content style={{ background: "#fff", display: "flex", flexDirection: "column", position: "relative", height: "100%" }}>
             <ChatHeader
                 currentUser={currentUser}
                 conversation={selectedConversation}

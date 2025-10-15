@@ -294,7 +294,7 @@ const ChatInterface = () => {
   const showSidebarContent = !isMobile || !showChatArea;
 
   return (
-      <Layout style={{ height: "calc(100vh - 12.5vh)", background: "#fff" }}>
+      <Layout style={{ height: "calc(100vh - 13vh)",minHeight: "100%", background: "#fff" }}>
         {/* Desktop Sidebar */}
         {(!isMobile || (isMobile && !showChatArea)) && (
             <ConversationSidebar

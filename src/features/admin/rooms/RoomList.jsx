@@ -682,7 +682,7 @@ const RoomList = () => {
                   size: isTablet ? "small" : "default",
                 }}
                 loading={isLoading}
-                scroll={{ x: isTablet ? 800 : "max-content", y: 325 }}
+                scroll={{ x: isTablet ? 800 : "max-content", y: 350 }}
                 sticky
                 size={isTablet ? "small" : "middle"}
             />

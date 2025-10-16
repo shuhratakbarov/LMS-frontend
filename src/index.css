@@ -1,6 +1,19 @@
-/*#webpack-dev-server-client-overlay-div{*/
-/*    display: none !important;*/
-/*}*/
-/*#webpack-dev-server-client-overlay{*/
-/*    display: none !important;*/
-/*}*/
+/* Add this to your global CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html, #root {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    height: 100%;
+    /*overflow-x: hidden;*/
+}
+
+/* Target React Router outlet specifically */
+.ant-layout-content > div {
+    margin: 0 !important;
+}

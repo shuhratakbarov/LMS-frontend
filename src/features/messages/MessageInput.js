@@ -49,7 +49,6 @@ const MessageInput = ({
             background: "#fff",
             position: "sticky",
             bottom: 0,
-            marginBottom: isMobile ? "-5.5vh" : "-3.5vh"
         }}>
             {/* Outer wrapper with border */}
             <div style={{

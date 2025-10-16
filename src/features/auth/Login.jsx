@@ -38,7 +38,7 @@ const Login = () => {
     };
     return (
         <div style={{
-            background: "linear-gradient(135deg, #1e90ff, #4169e1, #0000cd)",
+            background: "linear-gradient(135deg, #4169e1, #111)",
             display: "flex",
             flexDirection: "row",
             width: "100%",
@@ -47,14 +47,14 @@ const Login = () => {
             padding: 0,
             boxSizing: "border-box"
         }}>
-            <div style={{
-                flex: "1",
-                backgroundImage: `url("${imageLogin}")`,
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                display: window.innerWidth < 768 ? "none" : "block"
-            }} />
+            {/*<div style={{*/}
+            {/*    flex: "1",*/}
+            {/*    backgroundImage: `url("${imageLogin}")`,*/}
+            {/*    backgroundSize: "cover",*/}
+            {/*    backgroundRepeat: "no-repeat",*/}
+            {/*    backgroundPosition: "center",*/}
+            {/*    display: window.innerWidth < 768 ? "none" : "block"*/}
+            {/*}} />*/}
 
             <div style={{
                 flex: "1",
@@ -65,22 +65,22 @@ const Login = () => {
                 padding: window.innerWidth < 768 ? "1rem" : "2rem",
                 width: "100%"
             }}>
-                <img
-                    src={imageTUIT}
-                    alt="Learning Logo"
-                    style={{
-                        width: window.innerWidth < 480 ? "15vh" : "20vh",
-                        height: "auto",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                        marginBottom: "1.5rem"
-                    }}
-                />
+                {/*<img*/}
+                {/*    src={imageTUIT}*/}
+                {/*    alt="Learning Logo"*/}
+                {/*    style={{*/}
+                {/*        width: window.innerWidth < 480 ? "15vh" : "20vh",*/}
+                {/*        height: "auto",*/}
+                {/*        borderRadius: "50%",*/}
+                {/*        objectFit: "cover",*/}
+                {/*        marginBottom: "1.5rem"*/}
+                {/*    }}*/}
+                {/*/>*/}
                 <h2 style={{
                     textAlign: "center",
                     marginBottom: "2rem",
                     fontSize: window.innerWidth < 480 ? "1.2rem" : "1.5rem",
-                    padding: "0 1rem"
+                    padding: "0 1rem",
                 }}>
                     Learning Management System
                 </h2>

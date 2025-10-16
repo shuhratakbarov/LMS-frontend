@@ -388,7 +388,7 @@ const SystemLayout = ({user, isConnected}) => {
                         style={{
                             background: "#ffffff",
                             // borderRadius: isMobile ? 6 : 8,
-                            padding: isMobile ? "0px" : isTablet ? "4px" : "8px",
+                            padding: isMobile ? "6px" : isTablet ? "8px" : "10px",
                             minHeight: "100%",
                             boxShadow: "0 1px 4px rgba(0,21,41,0.08)"
                         }}

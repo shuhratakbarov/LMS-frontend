@@ -124,7 +124,7 @@ const UserDashboard = ({user}) => {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>
                   <BellOutlined style={{ marginRight: 8 }} />
-                  Updates & Announcements
+                  Updates
                 </span>
                 {stats.unreadUpdates > 0 && (
                   <Badge count={stats.unreadUpdates} />

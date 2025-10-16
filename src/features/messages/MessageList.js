@@ -184,7 +184,7 @@ const MessageList = ({
                     {showScrollToBottom && (
                         <div style={{
                             position: "absolute",
-                            bottom: isMobile ? "70px" : "5vh",
+                            bottom: isMobile ? "6vh" : "8vh",
                             left: "50%",
                             transform: "translateX(-50%)",
                             zIndex: 1000

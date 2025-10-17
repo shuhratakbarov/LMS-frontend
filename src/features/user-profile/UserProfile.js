@@ -105,7 +105,7 @@ const UserProfile = ({ user }) => {
   };
 
   return (
-      <div style={{ padding: 0, background: 'transparent' }}>
+      <div style={{ padding: "6px", background: 'transparent', maxWidth: "99%" }}>
         {/* Header Section */}
         <Row gutter={[isMobile ? 16 : 24, isMobile ? 16 : 24]} style={{ marginBottom: isMobile ? 16 : 24 }}>
           <Col span={24}>
@@ -262,7 +262,7 @@ const UserProfile = ({ user }) => {
             activeKey={activeTab}
             onChange={setActiveTab}
             size={isMobile ? "middle" : "large"}
-            tabBarStyle={{ marginBottom: isMobile ? 16 : 24 }}
+            tabBarStyle={{ marginBottom: isMobile ? 16 : 24, marginLeft: isMobile ? 10 : 20 }}
         >
           <Tabs.TabPane tab={isMobile ? "Info" : "Personal Information"} key="1">
             <Row gutter={[isMobile ? 16 : 24, isMobile ? 16 : 24]}>

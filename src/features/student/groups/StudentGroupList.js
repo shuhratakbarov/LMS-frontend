@@ -309,7 +309,7 @@ const StudentGroupList = () => {
   }
 
   return (
-      <Fragment>
+      <div style={{padding: "8px"}}>
         {/* Header Section */}
         <div style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -510,7 +510,7 @@ const StudentGroupList = () => {
           box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
         }
       `}</style>
-      </Fragment>
+      </div>
   );
 };
 

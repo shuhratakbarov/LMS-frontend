@@ -244,7 +244,7 @@ const ActionsInGroup = () => {
   );
 
   return (
-      <div style={{ padding: isMobile ? 0 : 0 }}>
+      <div style={{ padding: isMobile ? "4px" : 0 }}>
         {/* Header Section */}
         <Card
             style={{

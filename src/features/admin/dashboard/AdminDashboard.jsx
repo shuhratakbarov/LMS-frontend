@@ -74,12 +74,12 @@ const AdminDashboard = () => {
   }
 
   return (
-      <Fragment>
+      <div style={{padding: "6px"}}>
         {/* Header */}
         <div style={{
           textAlign: "center",
           marginBottom: isMobile ? 20 : 32,
-          padding: isMobile ? "0 8px" : 0
+          padding: isMobile ? "2px 8px" : 0
         }}>
           <Title
               level={isMobile ? 3 : 2}
@@ -153,7 +153,7 @@ const AdminDashboard = () => {
         {/*<div style={{ marginTop: isMobile ? 16 : 24 }}>*/}
         {/*  <LastUpdated />*/}
         {/*</div>*/}
-      </Fragment>
+      </div>
   );
 };
 

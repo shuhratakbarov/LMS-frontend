@@ -145,10 +145,10 @@ const TimetableView = () => {
   const columnWidth = rooms.length > 0 ? `${Math.floor(100 / rooms.length)}%` : "auto";
 
   return (
-    <div style={{ padding: 0 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+    <div style={{ padding: "4px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "12px 4px" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <Title level={2} style={{ marginBottom: 0, marginRight: 16 }}>Lesson Schedule</Title>
+          <Title level={2} style={{ marginBottom: 4, marginRight: 16 }}>Lesson Schedule</Title>
           {/*<Tooltip title="Switch to List View">*/}
           {/*  <Switch*/}
           {/*    style={{marginTop : "4vh"}}*/}

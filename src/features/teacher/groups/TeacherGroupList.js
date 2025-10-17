@@ -370,10 +370,9 @@ const TeacherGroupList = () => {
   return (
       <div style={{
         // background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        minHeight: "100vh",
-        padding: isMobile ? 12 : isTablet ? 16 : 24,
-        margin: isMobile ? -12 : isTablet ? -16 : -20,
-        marginTop: isMobile ? -12 : isTablet ? -16 : -20
+        height: "100%",
+        padding: isMobile ? 6 : isTablet ? 12 : 20,
+
       }}>
         {/* Header Section */}
         <div style={{

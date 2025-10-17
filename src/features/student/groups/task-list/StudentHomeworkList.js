@@ -512,7 +512,7 @@ const StudentHomeworkList = () => {
   }
 
   return (
-      <Fragment>
+      <div style={{padding: "6px"}}>
         {/* Header Section */}
         <div style={{
           background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
@@ -811,7 +811,7 @@ const StudentHomeworkList = () => {
           box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         }
       `}</style>
-      </Fragment>
+      </div>
   );
 };
 

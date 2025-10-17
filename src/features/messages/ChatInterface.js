@@ -294,8 +294,18 @@ const ChatInterface = () => {
   const showSidebarContent = !isMobile || !showChatArea;
 
   return (
-      <Layout style={{ height: "calc(100vh - 13vh)",minHeight: "100%", background: "#fff" }}>
-        {/* Desktop Sidebar */}
+      <Layout
+          style={{
+            height: isMobile ? "calc(100vh - 56px)" : "calc(100vh - 10vh)",
+            minHeight: 0,
+            background: "#fff",
+            overflow: "hidden",
+            display: "flex",
+            // flexDirection: "row",
+            position: "relative"
+          }}
+      >
+        {/* Conversation Sidebar - Show on desktop or mobile when no chat selected */}
         {(!isMobile || (isMobile && !showChatArea)) && (
             <ConversationSidebar
                 currentUser={currentUser}
@@ -320,70 +330,43 @@ const ChatInterface = () => {
             />
         )}
 
-        {/* Mobile Drawer Sidebar */}
-        {/*{isMobile && (*/}
-        {/*    <Drawer*/}
-        {/*        title="Messages"*/}
-        {/*        placement="left"*/}
-        {/*        onClose={() => setSidebarVisible(false)}*/}
-        {/*        open={sidebarVisible}*/}
-        {/*        width="85%"*/}
-        {/*        styles={{*/}
-        {/*          body: { padding: 0 }*/}
-        {/*        }}*/}
-        {/*    >*/}
-        {/*      <ConversationSidebar*/}
-        {/*          currentUser={currentUser}*/}
-        {/*          searchTerm={chatState.searchTerm}*/}
-        {/*          onSearchChange={handleSearch}*/}
-        {/*          showTypeToggle={chatState.showTypeToggle}*/}
-        {/*          setShowTypeToggle={chatState.setShowTypeToggle}*/}
-        {/*          searchType={chatState.searchType}*/}
-        {/*          setSearchType={chatState.setSearchType}*/}
-        {/*          conversationsLoading={chatState.conversationsLoading}*/}
-        {/*          searchMode={chatState.searchMode}*/}
-        {/*          filteredLocalMatches={filteredLocalMatches}*/}
-        {/*          filteredGlobalMatches={filteredGlobalMatches}*/}
-        {/*          onlineUsernames={chatState.onlineUsernames}*/}
-        {/*          onSearchResultClick={handleSearchResultClick}*/}
-        {/*          filteredConversations={filteredConversations}*/}
-        {/*          selectedConversation={chatState.selectedConversation}*/}
-        {/*          onConversationSelect={handleConversationSelect}*/}
-        {/*          typing={typing}*/}
-        {/*          typingByConversation={typingByConversation}*/}
-        {/*          isMobile={true}*/}
-        {/*      />*/}
-        {/*    </Drawer>*/}
-        {/*)}*/}
-
-        {/* Chat Area */}
-        {/* Chat Area - Show only on desktop or when conversation selected on mobile */}
+        {/* Chat Area - Show on desktop or mobile when chat selected */}
         {showChatArea && (
-            <ChatArea
-                selectedConversation={chatState.selectedConversation}
-                selectedUserTarget={chatState.selectedUserTarget}
-                onlineUsernames={chatState.onlineUsernames}
-                userPresence={userPresence}
-                messages={chatState.messages}
-                loading={chatState.loading}
-                typing={typing}
-                typingByConversation={typingByConversation}
-                currentUser={chatState.currentUser}
-                firstUnreadIndex={chatState.firstUnreadIndex}
-                messageInput={chatState.messageInput}
-                onInputChange={handleInputChange}
-                onSendMessage={handleSendMessage}
-                onJoinGroup={handleJoinGroup}
-                messageEndRef={messagesEndRef}
-                containerRef={containerRef}
-                showScrollToBottom={showScrollToBottom}
-                onScrollToBottom={scrollToBottomForced}
-                onScroll={handleScroll}
-                otherLastReadMessageCreatedAt={otherLastReadMessageCreatedAt}
-                isMobile={isMobile}
-                onBack={handleBackToConversations}
-                onOpenSidebar={() => setSidebarVisible(true)}
-            />
+            <div style={{
+              flex: 1,
+              height: "100%",
+              minWidth: 0,
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              position: "relative"
+            }}>
+              <ChatArea
+                  selectedConversation={chatState.selectedConversation}
+                  selectedUserTarget={chatState.selectedUserTarget}
+                  onlineUsernames={chatState.onlineUsernames}
+                  userPresence={userPresence}
+                  messages={chatState.messages}
+                  loading={chatState.loading}
+                  typing={typing}
+                  typingByConversation={typingByConversation}
+                  currentUser={chatState.currentUser}
+                  firstUnreadIndex={chatState.firstUnreadIndex}
+                  messageInput={chatState.messageInput}
+                  onInputChange={handleInputChange}
+                  onSendMessage={handleSendMessage}
+                  onJoinGroup={handleJoinGroup}
+                  messageEndRef={messagesEndRef}
+                  containerRef={containerRef}
+                  showScrollToBottom={showScrollToBottom}
+                  onScrollToBottom={scrollToBottomForced}
+                  onScroll={handleScroll}
+                  otherLastReadMessageCreatedAt={otherLastReadMessageCreatedAt}
+                  isMobile={isMobile}
+                  onBack={handleBackToConversations}
+                  onOpenSidebar={() => setSidebarVisible(true)}
+              />
+            </div>
         )}
       </Layout>
   );

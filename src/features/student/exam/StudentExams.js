@@ -236,36 +236,36 @@ const StudentExams = () => {
     : 0;
 
   return (
-    <div style={{ padding: '8px 0' }}>
+    <div style={{ padding: '8px 8px' }}>
       {/* Header Section */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div>
             <Title level={2} style={{ margin: 0, color: '#262626' }}>
               <BookOutlined style={{ marginRight: 12, color: '#1890ff' }} />
-              Exam Management
+              Exams
             </Title>
             <Text type="secondary" style={{ fontSize: 16 }}>
-              Create, manage, and monitor your online examinations
+              Monitor your online examinations
             </Text>
           </div>
-          <Button
-            type="primary"
-            size="large"
-            icon={<PlusOutlined />}
-            onClick={handleCreateExam}
-            style={{
-              borderRadius: 8,
-              height: 44,
-              paddingLeft: 20,
-              paddingRight: 20,
-              fontSize: 16,
-              fontWeight: 500,
-              boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)'
-            }}
-          >
-            Create New Exam
-          </Button>
+          {/*<Button*/}
+          {/*  type="primary"*/}
+          {/*  size="large"*/}
+          {/*  icon={<PlusOutlined />}*/}
+          {/*  onClick={handleCreateExam}*/}
+          {/*  style={{*/}
+          {/*    borderRadius: 8,*/}
+          {/*    height: 44,*/}
+          {/*    paddingLeft: 20,*/}
+          {/*    paddingRight: 20,*/}
+          {/*    fontSize: 16,*/}
+          {/*    fontWeight: 500,*/}
+          {/*    boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)'*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  Create New Exam*/}
+          {/*</Button>*/}
         </div>
 
         {/* Statistics Cards */}

@@ -77,14 +77,6 @@ const TeacherLessons = () => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
         <Title level={2}>My Lesson Schedule</Title>
         <div>
-          <Select
-            value={selectedWeek}
-            onChange={(value) => setSelectedWeek(value)}
-            style={{ width: 150 }}
-          >
-            <Option value={1}>Current Week</Option>
-            <Option value={2}>Next Week</Option>
-          </Select>
           {!hasSchedules && !loading && (
             <span style={{ marginLeft: "10px", color: "#ff4d4f" }}>
               No schedules found

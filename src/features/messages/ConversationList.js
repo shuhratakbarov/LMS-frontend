@@ -24,7 +24,7 @@ const ConversationList = ({
                     <List.Item
                         onClick={() => onSelect(conversation)}
                         style={{
-                            padding: isMobile ? "8px 12px" : "10px 16px",
+                            padding: isMobile ? "8px 6px" : "10px 16px",
                             cursor: "pointer",
                             backgroundColor: isSelected ? "#e6f7ff" : "transparent",
                             borderLeft: isSelected ? "3px solid #1890ff" : "3px solid transparent"
@@ -35,15 +35,15 @@ const ConversationList = ({
                                 conversation.isGroup ? (
                                     <Avatar
                                         icon={<TeamOutlined/>}
-                                        size={isMobile ? 40 : 48}
+                                        size={isMobile ? 46 : 54}
                                         style={{backgroundColor: "rebeccapurple"}}
                                     />
                                 ) : (
                                     <Badge dot={isOnline} color="#1677ff" size="default">
                                         <Avatar
-                                            size={isMobile ? 40 : 48}
+                                            size={isMobile ? 46 : 54}
                                             icon={<RoleIcon role={conversation.role}/>}
-                                            style={{backgroundColor: "#949494", fontSize: isMobile ? 24 : 30}}
+                                            style={{backgroundColor: "#949494", fontSize: isMobile ? 30 : 38}}
                                         >
                                             {conversation.name?.charAt(0)?.toUpperCase()}
                                         </Avatar>
@@ -57,11 +57,11 @@ const ConversationList = ({
                       alignItems: "center",
                       gap: "6px",
                       fontWeight: isSelected ? "bold" : "normal",
-                      fontSize: isMobile ? "14px" : "15px",
+                      fontSize: isMobile ? "16px" : "18px",
                   }}>
                     {conversation.name || "Unknown"}
                   </span>
-                                    <span style={{fontSize: isMobile ? "11px" : "12px", color: "#999"}}>
+                                    <span style={{fontSize: isMobile ? "12px" : "14px", color: "#999"}}>
                     {formatConversationLastMessageTime(conversation.lastMessageCreatedAt)}
                   </span>
                                 </div>
@@ -74,7 +74,7 @@ const ConversationList = ({
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                       maxWidth: isMobile ? "140px" : "180px",
-                      fontSize: isMobile ? "12px" : "13px"
+                      fontSize: isMobile ? "12px" : "14px"
                   }}>
                     {isTypingInConversation
                         ? <TypingIndicator text="typing" size="medium" color="#1890ff"/>

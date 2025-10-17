@@ -293,7 +293,7 @@ const CourseList = () => {
   );
 
   return (
-      <div style={{ padding: isMobile ? 0 : "0" }}>
+      <div style={{ padding: isMobile ? "4px" : "0" }}>
         {/* Header */}
         <div
             style={{

@@ -22,7 +22,7 @@
 }
 
 .timeHeader {
-    width: 80px;
+    width: 60px;
 }
 
 .dayHeader {
@@ -30,12 +30,12 @@
 }
 
 .timeCell {
-    width: 80px;
+    width: 40px;
     text-align: center;
     border: 1px solid #ddd;
     background-color: #f9f9f9;
     font-weight: 500;
-    min-height: 80px;
+    min-height: 40px;
 }
 
 .lessonCell, .emptyCell {

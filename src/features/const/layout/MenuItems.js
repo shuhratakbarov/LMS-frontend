@@ -1,8 +1,7 @@
 import {
   GroupOutlined, DashboardOutlined, BookOutlined, MessageOutlined,
-  TableOutlined, MailOutlined, BarChartOutlined, BankOutlined,
-  ScheduleOutlined, TeamOutlined, FileTextOutlined,
-  ReadOutlined, LoginOutlined, ProfileOutlined
+  TableOutlined, BankOutlined, ScheduleOutlined, TeamOutlined,
+  FileTextOutlined, ReadOutlined, LoginOutlined, UserOutlined
 } from "@ant-design/icons";
 
 export const getMenuItems = (role) => {
@@ -68,7 +67,7 @@ export const getMenuItems = (role) => {
       },
       {
         key: 2,
-        icon: <ProfileOutlined />,
+        icon: <UserOutlined />,
         label: "Profile",
         path: "/teacher/profile",
       },
@@ -107,7 +106,7 @@ export const getMenuItems = (role) => {
       },
       {
         key: 2,
-        icon: <ProfileOutlined />,
+        icon: <UserOutlined />,
         label: "Profile",
         path: "/student/profile",
       },

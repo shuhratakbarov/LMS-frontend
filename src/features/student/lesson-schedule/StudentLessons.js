@@ -73,7 +73,7 @@ const StudentLessons = () => {
   const hasSchedules = Array.isArray(schedules) && schedules.length > 0;
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "6px", maxHeight: "100%" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
         <div style={{
           background: 'linear-gradient(135deg, #1e90ff, #4169e1, #0000cd)',
@@ -175,8 +175,6 @@ const StudentLessons = () => {
                       }
                     }
 
-                    // For hours that are part of a multi-hour schedule but not the start,
-                    // return null to let the rowSpan handle the display
                     return null;
                   }
 

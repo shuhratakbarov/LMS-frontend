@@ -25,12 +25,14 @@ const MessageInput = ({
 
             onChange({ target: { value: newValue } });
 
-            setTimeout(() => {
-                textarea.focus();
-                textarea.setSelectionRange(start + emoji.length, start + emoji.length);
-            }, 0);
+            // Don't refocus on mobile to prevent keyboard reopening
+            if (!isMobile) {
+                setTimeout(() => {
+                    textarea.focus();
+                    textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+                }, 0);
+            }
         }
-        // setEmojiPickerVisible(false);
     };
 
     const handleKeyPress = (e) => {
@@ -44,13 +46,14 @@ const MessageInput = ({
 
     return (
         <div style={{
-            // padding: isMobile ? "0px 0px" : "0px 0px",
             borderTop: "1px solid #e8e8e8",
             background: "#fff",
             position: "sticky",
             bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10
         }}>
-            {/* Outer wrapper with border */}
             <div style={{
                 border: "1px solid #d9d9d9",
                 background: "#fafafa",
@@ -59,7 +62,6 @@ const MessageInput = ({
                 transition: "all 0.2s ease",
                 overflow: "hidden"
             }}>
-                {/* Attachment button */}
                 <Button
                     type="text"
                     icon={<PlusOutlined />}
@@ -79,7 +81,6 @@ const MessageInput = ({
                     onClick={() => console.log("Attachment clicked")}
                 />
 
-                {/* Text input area - expands upward */}
                 <div style={{
                     flex: 1,
                     display: "flex",
@@ -112,7 +113,6 @@ const MessageInput = ({
                     />
                 </div>
 
-                {/* Emoji picker button */}
                 <Popover
                     content={<EmojiPicker onEmojiSelect={handleEmojiSelect} isMobile={isMobile} />}
                     trigger="click"
@@ -139,7 +139,6 @@ const MessageInput = ({
                     />
                 </Popover>
 
-                {/* Send/Microphone button */}
                 <Button
                     type="text"
                     icon={value?.trim() ? <SendOutlined /> : <AudioOutlined />}

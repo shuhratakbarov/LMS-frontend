@@ -59,39 +59,64 @@ const ChatArea = ({
     }
 
     return (
-        <Content style={{ background: "#fff", display: "flex", flexDirection: "column", position: "relative", height: "100%" }}>
-            <ChatHeader
-                currentUser={currentUser}
-                conversation={selectedConversation}
-                onlineUsernames={onlineUsernames}
-                onJoinGroup={onJoinGroup}
-                userPresence={userPresence}
-                typingByConversation={typingByConversation}
-                isMobile={isMobile}
-                onBack={isMobile ? onBack : undefined}
-            />
+        <Content
+            style={{
+                background: "#fff",
+                display: "flex",
+                flexDirection: "column",
+                position: "relative",
+                height: "100%",
+                minHeight: 0,
+                overflow: "hidden"
+            }}
+        >
+            {/* Header - Fixed at top */}
+            <div style={{ flexShrink: 0 }}>
+                <ChatHeader
+                    currentUser={currentUser}
+                    conversation={selectedConversation}
+                    onlineUsernames={onlineUsernames}
+                    onJoinGroup={onJoinGroup}
+                    userPresence={userPresence}
+                    typingByConversation={typingByConversation}
+                    isMobile={isMobile}
+                    onBack={isMobile ? onBack : undefined}
+                />
+            </div>
 
-            <MessageList
-                messages={messages}
-                loading={loading}
-                typing={typing}
-                currentUser={currentUser}
-                firstUnreadIndex={firstUnreadIndex}
-                otherLastReadMessageCreatedAt={otherLastReadMessageCreatedAt}
-                messagesEndRef={messageEndRef}
-                containerRef={containerRef}
-                showScrollToBottom={showScrollToBottom}
-                onScrollToBottom={onScrollToBottom}
-                handleScroll={onScroll}
-                isMobile={isMobile}
-            />
+            {/* Message List - Scrollable middle section */}
+            <div style={{
+                flex: 1,
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0
+            }}>
+                <MessageList
+                    messages={messages}
+                    loading={loading}
+                    typing={typing}
+                    currentUser={currentUser}
+                    firstUnreadIndex={firstUnreadIndex}
+                    otherLastReadMessageCreatedAt={otherLastReadMessageCreatedAt}
+                    messagesEndRef={messageEndRef}
+                    containerRef={containerRef}
+                    showScrollToBottom={showScrollToBottom}
+                    onScrollToBottom={onScrollToBottom}
+                    handleScroll={onScroll}
+                    isMobile={isMobile}
+                />
+            </div>
 
-            <MessageInput
-                value={messageInput}
-                onChange={onInputChange}
-                onSend={onSendMessage}
-                isMobile={isMobile}
-            />
+            {/* Message Input - Fixed at bottom */}
+            <div style={{ flexShrink: 0 }}>
+                <MessageInput
+                    value={messageInput}
+                    onChange={onInputChange}
+                    onSend={onSendMessage}
+                    isMobile={isMobile}
+                />
+            </div>
         </Content>
     );
 };

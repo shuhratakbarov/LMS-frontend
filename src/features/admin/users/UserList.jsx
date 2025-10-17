@@ -23,7 +23,7 @@ const UserList = () => {
   };
 
   return (
-      <Fragment>
+      <div style={{padding: "4px"}}>
         <Card
             style={{
               marginBottom: isMobile ? 16 : 20,
@@ -57,7 +57,7 @@ const UserList = () => {
         </Card>
 
         {activeTab === "students" ? <StudentList /> : <TeacherList />}
-      </Fragment>
+      </div>
   );
 };
 

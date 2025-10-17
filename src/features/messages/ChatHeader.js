@@ -21,7 +21,7 @@ const ChatHeader = ({
 
     return (
         <div style={{
-            padding: isMobile ? "12px 16px" : "16px 24px",
+            padding: isMobile ? "8px 2px" : "10px 20px",
             borderBottom: "1px solid #f0f0f0",
             display: "flex",
             justifyContent: "space-between",
@@ -37,7 +37,7 @@ const ChatHeader = ({
                         onClick={onBack}
                         style={{
                             fontSize: "18px",
-                            padding: "4px 8px"
+                            padding: "2px 4px"
                         }}
                     />
                 )}

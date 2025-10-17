@@ -383,7 +383,7 @@ const AdminUpdates = () => {
   );
 
   return (
-      <div style={{ padding: 0 }}>
+      <div style={{ padding: "4px" }}>
         {/* Header Section */}
         <div style={{
           display: "flex",

@@ -1,22 +1,16 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
-import {Layout, Menu, Button, Avatar, Space, Dropdown, Badge, Spin, message, Drawer} from "antd";
+import {Layout, Menu, Button, Avatar, Space, Dropdown, Spin, message, Drawer} from "antd";
 import {
-    LogoutOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     MoreOutlined,
-    SettingOutlined,
     VideoCameraOutlined,
-    CustomerServiceOutlined,
-    AlertOutlined,
-    ExportOutlined,
     BarChartOutlined,
     CloseOutlined
 } from "@ant-design/icons";
 import {Link, Outlet, useLocation, useNavigate} from "react-router-dom";
 import {getMenuItems} from "./MenuItems";
 
-import {handleLogout} from "../../../utils/auth";
 import {dropdownMenu, RoleIcon} from "../../../utils/util";
 import Clock from "../Clock";
 import {getStudentHomeworkNotification} from "../../../services/api-client";
@@ -45,12 +39,10 @@ const SystemLayout = ({user, isConnected}) => {
             setIsMobile(width < 768);
             setIsTablet(width >= 768 && width < 1024);
 
-            // Auto-collapse on tablet
             if (width >= 768 && width < 1024) {
                 setCollapsed(true);
             }
 
-            // Close mobile drawer on resize to desktop
             if (width >= 768) {
                 setMobileDrawerVisible(false);
             }
@@ -90,7 +82,12 @@ const SystemLayout = ({user, isConnected}) => {
         }
     }, []);
 
-    // Sidebar content component (reusable for both Sider and Drawer)
+    const handleMobileMenuClick = () => {
+        if (isMobile) {
+            setMobileDrawerVisible(false);
+        }
+    };
+
     const SidebarContent = ({onMenuClick}) => (
         <>
             <div
@@ -197,14 +194,8 @@ const SystemLayout = ({user, isConnected}) => {
         </>
     );
 
-    const handleMobileMenuClick = () => {
-        if (isMobile) {
-            setMobileDrawerVisible(false);
-        }
-    };
-
     return (
-        <Layout style={{width: "100%", display: "flex", minHeight: "100vh"}}>
+        <Layout style={{width: "100%", display: "flex", maxHeight: "100%"}}>
             {/* Desktop/Tablet Sidebar */}
             {!isMobile && (
                 <Sider
@@ -254,7 +245,7 @@ const SystemLayout = ({user, isConnected}) => {
                 style={{
                     marginLeft: isMobile ? 0 : (collapsed ? 80 : 250),
                     transition: "margin-left 0.2s",
-                    minHeight: "100vh",
+                    minHeight: "100%",
                     display: "flex",
                     flexDirection: "column"
                 }}
@@ -350,13 +341,13 @@ const SystemLayout = ({user, isConnected}) => {
                                 type="text"
                                 icon={<VideoCameraOutlined style={{fontSize: 20}}/>}
                                 size="large"
-                                title="Video Conference"
+                                title="Video Resources"
                             />
                             <Button
                                 type="text"
                                 icon={<BarChartOutlined style={{fontSize: 20}}/>}
                                 size="large"
-                                title="Analytics"
+                                title="Ranking"
                             />
                         </>
 
@@ -380,7 +371,7 @@ const SystemLayout = ({user, isConnected}) => {
                         background: "#f0f2f5",
                         flex: 1,
                         overflow: "auto",
-                        height: "100%"
+                        // height: "100%"
                         // minHeight: "calc(100vh - 64px)"
                     }}
                 >
@@ -388,8 +379,8 @@ const SystemLayout = ({user, isConnected}) => {
                         style={{
                             background: "#ffffff",
                             // borderRadius: isMobile ? 6 : 8,
-                            padding: isMobile ? "6px" : isTablet ? "8px" : "10px",
-                            minHeight: "100%",
+                            padding: isMobile ? "0px" : isTablet ? "10px" : "12px",
+                            height: "100%",
                             boxShadow: "0 1px 4px rgba(0,21,41,0.08)"
                         }}
                     >
